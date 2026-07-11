@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts'
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts'
 
 const causeKeys = [
   { key: 'causes.speeding', value: 32, color: '#ef4444' },
@@ -135,17 +135,26 @@ export default function Reports() {
 
       <div className="charts-grid">
         <div style={{ ...card, padding: '22px 24px' }}>
-          <div style={{ fontSize: 15, fontWeight: 600, color: '#e2e8f0', marginBottom: 4 }}>{t('reports.causesTitle')}</div>
-          <div style={{ fontSize: 12, color: '#475569', fontFamily: 'JetBrains Mono, monospace', marginBottom: 16 }}>{t('reports.causesSubtitle')}</div>
-          <ResponsiveContainer width="100%" height={260}>
-            <PieChart>
-              <Pie data={causeData} cx="50%" cy="50%" innerRadius={70} outerRadius={110} paddingAngle={3} dataKey="value">
-                {causeData.map((entry, i) => <Cell key={i} fill={entry.color} stroke="transparent" />)}
-              </Pie>
-              <Tooltip content={<CustomPieTooltip />} />
-              <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 12, color: '#94a3b8', fontFamily: 'JetBrains Mono, monospace' }} />
-            </PieChart>
-          </ResponsiveContainer>
+          <div style={{ fontSize: 15, fontWeight: 600, color: '#e2e8f0', marginBottom: 4, textAlign: 'center' }}>{t('reports.causesTitle')}</div>
+          <div style={{ fontSize: 12, color: '#475569', fontFamily: 'JetBrains Mono, monospace', marginBottom: 16, textAlign: 'center' }}>{t('reports.causesSubtitle')}</div>
+          <div className="pie-chart-wrap">
+            <ResponsiveContainer width="100%" height={196}>
+              <PieChart margin={{ top: 4, right: 0, bottom: 12, left: 0 }}>
+                <Pie data={causeData} cx="50%" cy="46%" innerRadius={58} outerRadius={86} paddingAngle={3} dataKey="value">
+                  {causeData.map((entry, i) => <Cell key={i} fill={entry.color} stroke="transparent" />)}
+                </Pie>
+                <Tooltip content={<CustomPieTooltip />} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="pie-legend-grid">
+            {causeData.map((entry) => (
+              <div key={entry.name} className="pie-legend-item">
+                <span className="pie-legend-dot" style={{ background: entry.color }} />
+                <span className="pie-legend-label" style={{ color: entry.color }}>{entry.name}</span>
+              </div>
+            ))}
+          </div>
         </div>
 
         <div style={{ ...card, overflow: 'hidden', position: 'relative' }}>
