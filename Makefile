@@ -18,4 +18,4 @@ preview:
 run: build preview
 
 deploy:
-	$(PNPM) exec vercel --prod
+	npx vercel --prod
