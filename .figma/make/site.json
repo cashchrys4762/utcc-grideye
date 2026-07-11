@@ -1,0 +1,8 @@
+{
+  "title": "GridEye",
+  "description": "Grid monitoring and analytics dashboard",
+  "language": "en",
+  "robots": {
+    "index": true
+  }
+}
