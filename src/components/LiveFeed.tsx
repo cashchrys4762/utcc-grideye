@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import PanelHeader from './PanelHeader'
 
 const logEntries = [
   { id: 'INC-0847', time: '18:47:12', typeKey: 'incidentTypes.collisionDetected', locKey: 'locations.latPhraoShort', sev: 'high', conf: 94.2 },
@@ -178,12 +179,15 @@ export default function LiveFeed() {
         </div>
 
         <div className="live-feed-log" style={{ display: 'flex', flexDirection: 'column', background: '#0a1628', borderWidth: 1, borderStyle: 'solid', borderColor: '#1e293b', borderRadius: 12, overflow: 'hidden' }}>
-          <div style={{ padding: '16px 18px', borderBottomWidth: 1, borderBottomStyle: 'solid', borderBottomColor: '#1e293b', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div>
-              <div style={{ fontSize: 14, fontWeight: 600, color: '#e2e8f0' }}>{t('liveFeed.incidentLog')}</div>
-              <div style={{ fontSize: 11, color: '#475569', fontFamily: 'JetBrains Mono, monospace', marginTop: 1 }}>{t('liveFeed.realtimeEvents')}</div>
-            </div>
-            <div style={{ fontSize: 11, color: '#22c55e', fontFamily: 'JetBrains Mono, monospace', background: 'rgba(34,197,94,0.1)', padding: '3px 8px', borderRadius: 4 }}>{t('liveFeed.liveStatus')}</div>
+          <div className="card-panel-header card-panel-header--center">
+            <PanelHeader
+              center
+              title={t('liveFeed.incidentLog')}
+              subtitle={t('liveFeed.realtimeEvents')}
+              actions={(
+                <div style={{ fontSize: 11, color: '#22c55e', fontFamily: 'JetBrains Mono, monospace', background: 'rgba(34,197,94,0.1)', padding: '3px 8px', borderRadius: 4, marginTop: 8 }}>{t('liveFeed.liveStatus')}</div>
+              )}
+            />
           </div>
 
           <div style={{ flex: 1, overflowY: 'auto', padding: '8px 0' }}>

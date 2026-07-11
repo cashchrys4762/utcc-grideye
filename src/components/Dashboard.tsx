@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+import PanelHeader from './PanelHeader'
 
 const trafficData = [
   { time: '00:00', volume: 1240 }, { time: '01:00', volume: 890 }, { time: '02:00', volume: 620 },
@@ -106,23 +107,25 @@ export default function Dashboard() {
       </div>
 
       <div style={{ ...card, padding: '22px 24px', marginBottom: 24 }}>
-        <div className="chart-header">
-          <div>
-            <div style={{ fontSize: 15, fontWeight: 600, color: '#e2e8f0' }}>{t('dashboard.chart.title')}</div>
-            <div style={{ fontSize: 12, color: '#475569', fontFamily: 'JetBrains Mono, monospace', marginTop: 2 }}>{t('dashboard.chart.subtitle')}</div>
-          </div>
-          <div style={{ display: 'flex', gap: 8 }}>
-            {['24h', '7d', '30d'].map((period, i) => (
-              <button key={period} style={{
-                padding: '5px 12px', borderRadius: 6,
-                borderWidth: 1, borderStyle: 'solid', borderColor: i === 0 ? '#00a3ff' : '#1e293b',
-                background: i === 0 ? 'rgba(0,163,255,0.1)' : 'transparent',
-                color: i === 0 ? '#00a3ff' : '#64748b',
-                fontSize: 12, cursor: 'pointer', fontFamily: 'JetBrains Mono, monospace',
-              }}>{period}</button>
-            ))}
-          </div>
-        </div>
+        <PanelHeader
+          center
+          title={t('dashboard.chart.title')}
+          subtitle={t('dashboard.chart.subtitle')}
+          actions={(
+            <div className="chart-period-tabs">
+              {['24h', '7d', '30d'].map((period, i) => (
+                <button key={period} style={{
+                  padding: '5px 12px', borderRadius: 6,
+                  borderWidth: 1, borderStyle: 'solid', borderColor: i === 0 ? '#00a3ff' : '#1e293b',
+                  background: i === 0 ? 'rgba(0,163,255,0.1)' : 'transparent',
+                  color: i === 0 ? '#00a3ff' : '#64748b',
+                  fontSize: 12, cursor: 'pointer', fontFamily: 'JetBrains Mono, monospace',
+                }}>{period}</button>
+              ))}
+            </div>
+          )}
+        />
+        <div className="chart-visual-wrap">
         <ResponsiveContainer width="100%" height={240}>
           <AreaChart data={trafficData} margin={{ top: 4, right: 8, left: -8, bottom: 0 }}>
             <defs>
@@ -138,16 +141,18 @@ export default function Dashboard() {
             <Area type="monotone" dataKey="volume" stroke="#00a3ff" strokeWidth={2} fill="url(#blueGrad)" dot={false} activeDot={{ r: 5, fill: '#00a3ff', stroke: '#0a1628', strokeWidth: 2 }} />
           </AreaChart>
         </ResponsiveContainer>
+        </div>
       </div>
 
       <div style={{ ...card, overflow: 'hidden' }}>
-        <div className="card-actions" style={{ padding: '18px 24px', borderBottomWidth: 1, borderBottomStyle: 'solid', borderBottomColor: '#1e293b' }}>
-          <div>
-            <div style={{ fontSize: 15, fontWeight: 600, color: '#e2e8f0' }}>{t('dashboard.incidents.title')}</div>
-            <div style={{ fontSize: 12, color: '#475569', fontFamily: 'JetBrains Mono, monospace', marginTop: 2 }}>{t('dashboard.incidents.subtitle')}</div>
-          </div>
+        <div className="card-panel-header card-panel-header--center">
+          <PanelHeader
+            center
+            title={t('dashboard.incidents.title')}
+            subtitle={t('dashboard.incidents.subtitle')}
+          />
           <button style={{
-            padding: '6px 14px', background: 'rgba(0,163,255,0.1)',
+            marginTop: 12, padding: '6px 14px', background: 'rgba(0,163,255,0.1)',
             borderWidth: 1, borderStyle: 'solid', borderColor: 'rgba(0,163,255,0.3)',
             borderRadius: 6, color: '#00a3ff', fontSize: 12, cursor: 'pointer', fontFamily: 'JetBrains Mono, monospace',
           }}>{t('dashboard.incidents.viewAll')}</button>

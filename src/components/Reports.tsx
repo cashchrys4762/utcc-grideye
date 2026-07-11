@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts'
+import PanelHeader from './PanelHeader'
+import ChartLegend from './ChartLegend'
 
 const causeKeys = [
   { key: 'causes.speeding', value: 32, color: '#ef4444' },
@@ -135,8 +137,7 @@ export default function Reports() {
 
       <div className="charts-grid">
         <div style={{ ...card, padding: '22px 24px' }}>
-          <div style={{ fontSize: 15, fontWeight: 600, color: '#e2e8f0', marginBottom: 4, textAlign: 'center' }}>{t('reports.causesTitle')}</div>
-          <div style={{ fontSize: 12, color: '#475569', fontFamily: 'JetBrains Mono, monospace', marginBottom: 16, textAlign: 'center' }}>{t('reports.causesSubtitle')}</div>
+          <PanelHeader center title={t('reports.causesTitle')} subtitle={t('reports.causesSubtitle')} />
           <div className="pie-chart-wrap">
             <ResponsiveContainer width="100%" height={196}>
               <PieChart margin={{ top: 4, right: 0, bottom: 12, left: 0 }}>
@@ -147,22 +148,14 @@ export default function Reports() {
               </PieChart>
             </ResponsiveContainer>
           </div>
-          <div className="pie-legend-grid">
-            {causeData.map((entry) => (
-              <div key={entry.name} className="pie-legend-item">
-                <span className="pie-legend-dot" style={{ background: entry.color }} />
-                <span className="pie-legend-label" style={{ color: entry.color }}>{entry.name}</span>
-              </div>
-            ))}
-          </div>
+          <ChartLegend items={causeData} />
         </div>
 
         <div style={{ ...card, overflow: 'hidden', position: 'relative' }}>
-          <div style={{ padding: '22px 24px 14px' }}>
-            <div style={{ fontSize: 15, fontWeight: 600, color: '#e2e8f0', marginBottom: 4 }}>{t('reports.hotspotTitle')}</div>
-            <div style={{ fontSize: 12, color: '#475569', fontFamily: 'JetBrains Mono, monospace' }}>{t('reports.hotspotSubtitle')}</div>
+          <div style={{ padding: '22px 24px 0' }}>
+            <PanelHeader center title={t('reports.hotspotTitle')} subtitle={t('reports.hotspotSubtitle')} />
           </div>
-          <div style={{ position: 'relative', margin: '0 24px 20px', height: 248, background: '#040d1a', borderRadius: 8, overflow: 'hidden', borderWidth: 1, borderStyle: 'solid', borderColor: '#1e293b' }}>
+          <div className="chart-visual-wrap" style={{ position: 'relative', margin: '0 24px', height: 248, background: '#040d1a', borderRadius: 8, overflow: 'hidden', borderWidth: 1, borderStyle: 'solid', borderColor: '#1e293b' }}>
             <div style={{ position: 'absolute', inset: 0, opacity: 0.15, backgroundImage: 'linear-gradient(#00a3ff 1px, transparent 1px), linear-gradient(90deg, #00a3ff 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
             <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} viewBox="0 0 100 100" preserveAspectRatio="none">
               <line x1="0" y1="40" x2="100" y2="42" stroke="#1e3a5f" strokeWidth="0.8" />
@@ -191,27 +184,26 @@ export default function Reports() {
                 </div>
               )
             })}
-            <div style={{ position: 'absolute', bottom: 10, right: 10, background: 'rgba(5,14,26,0.85)', borderWidth: 1, borderStyle: 'solid', borderColor: '#1e293b', borderRadius: 6, padding: '6px 10px' }}>
-              <div style={{ fontSize: 10, color: '#475569', fontFamily: 'JetBrains Mono, monospace', marginBottom: 4 }}>{t('reports.incidentDensity')}</div>
-              <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
-                {[0.2, 0.4, 0.6, 0.8, 1].map((o) => (
-                  <div key={o} style={{ width: 12, height: 12, borderRadius: 2, background: `rgba(239,68,68,${o})` }} />
-                ))}
-                <span style={{ fontSize: 10, color: '#475569', fontFamily: 'JetBrains Mono, monospace', marginLeft: 4 }}>{t('reports.high')}</span>
-              </div>
+          </div>
+          <div className="density-legend">
+            <span className="density-legend-title">{t('reports.incidentDensity')}</span>
+            <div className="density-legend-scale">
+              {[0.2, 0.4, 0.6, 0.8, 1].map((o) => (
+                <div key={o} className="density-legend-swatch" style={{ background: `rgba(239,68,68,${o})` }} />
+              ))}
             </div>
+            <span className="density-legend-high">{t('reports.high')}</span>
           </div>
         </div>
       </div>
 
       <div style={{ ...card, overflow: 'hidden' }}>
-        <div style={{ padding: '18px 24px', borderBottomWidth: 1, borderBottomStyle: 'solid', borderBottomColor: '#1e293b', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>
-            <div style={{ fontSize: 15, fontWeight: 600, color: '#e2e8f0' }}>{t('reports.tableTitle')}</div>
-            <div style={{ fontSize: 12, color: '#475569', fontFamily: 'JetBrains Mono, monospace', marginTop: 2 }}>
-              {t('reports.recordsSorted', { count: tableData.length, sort: sortLabels[sortCol] ?? sortCol })}
-            </div>
-          </div>
+        <div className="card-panel-header card-panel-header--center">
+          <PanelHeader
+            center
+            title={t('reports.tableTitle')}
+            subtitle={t('reports.recordsSorted', { count: tableData.length, sort: sortLabels[sortCol] ?? sortCol })}
+          />
         </div>
         <div className="table-scroll">
           <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 560 }}>

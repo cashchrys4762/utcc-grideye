@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import PanelHeader from './PanelHeader'
 
 function Toggle({ enabled, onChange, color = '#00a3ff' }: { enabled: boolean; onChange: (v: boolean) => void; color?: string }) {
   return (
@@ -50,9 +51,8 @@ const cardStyle: React.CSSProperties = {
 function Card({ title, subtitle, children }: { title: string; subtitle?: string; children: React.ReactNode }) {
   return (
     <div style={cardStyle}>
-      <div style={{ padding: '18px 22px', borderBottomWidth: 1, borderBottomStyle: 'solid', borderBottomColor: '#1e293b' }}>
-        <div style={{ fontSize: 15, fontWeight: 600, color: '#e2e8f0' }}>{title}</div>
-        {subtitle && <div style={{ fontSize: 12, color: '#475569', fontFamily: 'JetBrains Mono, monospace', marginTop: 2 }}>{subtitle}</div>}
+      <div className="card-panel-header card-panel-header--center">
+        <PanelHeader center title={title} subtitle={subtitle} />
       </div>
       <div style={{ padding: '20px 22px' }}>{children}</div>
     </div>
