@@ -92,14 +92,14 @@ export default function LiveFeed() {
   ]
 
   return (
-    <div style={{ padding: '28px 32px', minHeight: '100vh' }}>
+    <div className="page-content">
       <div style={{ marginBottom: 22 }}>
         <div style={{ fontSize: 11, color: '#00a3ff', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '0.12em', marginBottom: 4 }}>{t('liveFeed.badge')}</div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h1 style={{ fontSize: 26, fontWeight: 700, fontFamily: 'Rajdhani, sans-serif', color: '#e2e8f0', margin: 0, letterSpacing: '0.02em' }}>
+        <div className="page-header-row">
+          <h1 className="page-title">
             {t('liveFeed.title')}
           </h1>
-          <div style={{ display: 'flex', gap: 8 }}>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#0a1628', borderWidth: 1, borderStyle: 'solid', borderColor: '#1e293b', borderRadius: 6, padding: '6px 12px' }}>
               <div style={{ width: 7, height: 7, borderRadius: '50%', background: '#ef4444', boxShadow: '0 0 8px #ef4444' }} />
               <span style={{ fontSize: 12, color: '#ef4444', fontFamily: 'JetBrains Mono, monospace', fontWeight: 600 }}>{t('liveFeed.rec')}</span>
@@ -111,8 +111,8 @@ export default function LiveFeed() {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 16, height: 'calc(100vh - 160px)' }}>
-        <div style={{ position: 'relative', background: '#050e1a', borderWidth: 1, borderStyle: 'solid', borderColor: '#1e293b', borderRadius: 12, overflow: 'hidden', minHeight: 480 }}>
+      <div className="live-feed-grid">
+        <div className="live-feed-video" style={{ position: 'relative', background: '#050e1a', borderWidth: 1, borderStyle: 'solid', borderColor: '#1e293b', borderRadius: 12, overflow: 'hidden' }}>
           <div style={{
             position: 'absolute', inset: 0, opacity: 0.07,
             backgroundImage: 'linear-gradient(#00a3ff 1px, transparent 1px), linear-gradient(90deg, #00a3ff 1px, transparent 1px)',
@@ -131,19 +131,19 @@ export default function LiveFeed() {
           <BoundingBox x={60} y={28} w={20} h={32} label={`${t('liveFeed.bbox.incident')} · 91.4%`} color="#ef4444" />
           <BoundingBox x={78} y={42} w={12} h={18} label={`${t('liveFeed.bbox.ped')} · 88.6%`} color="#22c55e" />
 
-          <div style={{
+          <div className="hud-top" style={{
             position: 'absolute', top: 0, left: 0, right: 0,
             background: 'linear-gradient(180deg, rgba(0,0,0,0.85) 0%, transparent 100%)',
             padding: '14px 18px', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
           }}>
-            <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+            <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
               <span style={{ fontSize: 12, color: '#00a3ff', fontFamily: 'JetBrains Mono, monospace', fontWeight: 600 }}>{t('liveFeed.camId')}</span>
-              <span style={{ fontSize: 12, color: '#94a3b8', fontFamily: 'JetBrains Mono, monospace' }}>|</span>
+              <span className="hud-top-meta" style={{ fontSize: 12, color: '#94a3b8', fontFamily: 'JetBrains Mono, monospace' }}>|</span>
               <span style={{ fontSize: 12, color: '#94a3b8', fontFamily: 'JetBrains Mono, monospace' }}>
                 FPS: <span style={{ color: fps >= 29 ? '#22c55e' : '#f59e0b' }}>{fps}</span>
               </span>
-              <span style={{ fontSize: 12, color: '#94a3b8', fontFamily: 'JetBrains Mono, monospace' }}>|</span>
-              <span style={{ fontSize: 12, color: '#94a3b8', fontFamily: 'JetBrains Mono, monospace' }}>1920×1080</span>
+              <span className="hud-top-meta" style={{ fontSize: 12, color: '#94a3b8', fontFamily: 'JetBrains Mono, monospace' }}>|</span>
+              <span className="hud-top-meta" style={{ fontSize: 12, color: '#94a3b8', fontFamily: 'JetBrains Mono, monospace' }}>1920×1080</span>
             </div>
             <div style={{ display: 'flex', gap: 10 }}>
               <span style={{ fontSize: 11, color: '#22c55e', fontFamily: 'JetBrains Mono, monospace', background: 'rgba(34,197,94,0.1)', padding: '3px 8px', borderRadius: 4, borderWidth: 1, borderStyle: 'solid', borderColor: 'rgba(34,197,94,0.2)' }}>{t('liveFeed.aiActive')}</span>
@@ -151,12 +151,12 @@ export default function LiveFeed() {
             </div>
           </div>
 
-          <div style={{
+          <div className="hud-bottom" style={{
             position: 'absolute', bottom: 0, left: 0, right: 0,
             background: 'linear-gradient(0deg, rgba(0,0,0,0.9) 0%, transparent 100%)',
             padding: '12px 18px', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
           }}>
-            <div style={{ display: 'flex', gap: 20 }}>
+            <div className="hud-stats" style={{ display: 'flex', gap: 20 }}>
               {hudStats.map((s) => (
                 <div key={s.label}>
                   <div style={{ fontSize: 10, color: '#475569', fontFamily: 'JetBrains Mono, monospace' }}>{s.label}</div>
@@ -177,7 +177,7 @@ export default function LiveFeed() {
           <style>{`@keyframes scanline { 0% { top: 0%; } 100% { top: 100%; } }`}</style>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', background: '#0a1628', borderWidth: 1, borderStyle: 'solid', borderColor: '#1e293b', borderRadius: 12, overflow: 'hidden' }}>
+        <div className="live-feed-log" style={{ display: 'flex', flexDirection: 'column', background: '#0a1628', borderWidth: 1, borderStyle: 'solid', borderColor: '#1e293b', borderRadius: 12, overflow: 'hidden' }}>
           <div style={{ padding: '16px 18px', borderBottomWidth: 1, borderBottomStyle: 'solid', borderBottomColor: '#1e293b', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
               <div style={{ fontSize: 14, fontWeight: 600, color: '#e2e8f0' }}>{t('liveFeed.incidentLog')}</div>

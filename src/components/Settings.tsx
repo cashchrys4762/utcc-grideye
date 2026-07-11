@@ -61,7 +61,7 @@ function Card({ title, subtitle, children }: { title: string; subtitle?: string;
 
 function SettingRow({ label, desc, children }: { label: string; desc?: string; children: React.ReactNode }) {
   return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 0', borderBottomWidth: 1, borderBottomStyle: 'solid', borderBottomColor: 'rgba(30,41,59,0.6)' }}>
+    <div className="setting-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 0', borderBottomWidth: 1, borderBottomStyle: 'solid', borderBottomColor: 'rgba(30,41,59,0.6)' }}>
       <div>
         <div style={{ fontSize: 14, color: '#cbd5e1', fontWeight: 500 }}>{label}</div>
         {desc && <div style={{ fontSize: 12, color: '#475569', marginTop: 2 }}>{desc}</div>}
@@ -117,21 +117,21 @@ export default function Settings() {
   ]
 
   return (
-    <div style={{ padding: '28px 32px', minHeight: '100vh' }}>
+    <div className="page-content">
       <div style={{ marginBottom: 28 }}>
         <div style={{ fontSize: 11, color: '#00a3ff', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '0.12em', marginBottom: 4 }}>{t('settings.badge')}</div>
-        <h1 style={{ fontSize: 26, fontWeight: 700, fontFamily: 'Rajdhani, sans-serif', color: '#e2e8f0', margin: 0, letterSpacing: '0.02em' }}>{t('settings.title')}</h1>
+        <h1 className="page-title">{t('settings.title')}</h1>
         <div style={{ fontSize: 13, color: '#64748b', marginTop: 4 }}>{t('settings.subtitle')}</div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 18 }}>
+      <div className="settings-grid">
         <Card title={t('settings.camera.title')} subtitle={t('settings.camera.subtitle')}>
           <Slider label={t('settings.camera.resolution')} value={resolution} onChange={setResolution} min={480} max={2160} unit="p" />
           <Slider label={t('settings.camera.frameRate')} value={fps} onChange={setFps} min={15} max={60} unit="fps" />
           <Slider label={t('settings.camera.bitrate')} value={bitrate} onChange={setBitrate} min={2} max={20} unit="Mbps" />
           <div style={{ marginTop: 4 }}>
             <div style={{ fontSize: 12, color: '#475569', fontFamily: 'JetBrains Mono, monospace', marginBottom: 10 }}>{t('settings.camera.streamPreset')}</div>
-            <div style={{ display: 'flex', gap: 8 }}>
+            <div className="quality-presets" style={{ display: 'flex', gap: 8 }}>
               {qualityPresets.map((q, i) => (
                 <button key={q} style={{
                   flex: 1, padding: '7px 0', borderRadius: 6,
@@ -180,7 +180,7 @@ export default function Settings() {
               <span style={{ fontSize: 13, fontFamily: 'JetBrains Mono, monospace', color: '#94a3b8', fontWeight: 500 }}>{row.val}</span>
             </div>
           ))}
-          <div style={{ marginTop: 16, display: 'flex', gap: 10 }}>
+          <div className="system-actions" style={{ marginTop: 16, display: 'flex', gap: 10 }}>
             <button style={{ flex: 1, padding: '9px 0', background: 'rgba(0,163,255,0.08)', borderWidth: 1, borderStyle: 'solid', borderColor: 'rgba(0,163,255,0.25)', borderRadius: 8, color: '#00a3ff', fontSize: 13, cursor: 'pointer', fontFamily: 'JetBrains Mono, monospace' }}>{t('settings.system.checkUpdates')}</button>
             <button style={{ flex: 1, padding: '9px 0', background: 'rgba(239,68,68,0.08)', borderWidth: 1, borderStyle: 'solid', borderColor: 'rgba(239,68,68,0.2)', borderRadius: 8, color: '#ef4444', fontSize: 13, cursor: 'pointer', fontFamily: 'JetBrains Mono, monospace' }}>{t('settings.system.restartNode')}</button>
           </div>

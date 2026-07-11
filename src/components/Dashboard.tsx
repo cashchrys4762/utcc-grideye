@@ -71,20 +71,20 @@ export default function Dashboard() {
   }
 
   return (
-    <div style={{ padding: '28px 32px', minHeight: '100vh' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 28 }}>
+    <div className="page-content">
+      <div className="page-header">
         <div>
           <div style={{ fontSize: 11, color: '#00a3ff', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '0.12em', marginBottom: 4 }}>{t('dashboard.badge')}</div>
-          <h1 style={{ fontSize: 26, fontWeight: 700, fontFamily: 'Rajdhani, sans-serif', color: '#e2e8f0', margin: 0, letterSpacing: '0.02em' }}>{t('dashboard.title')}</h1>
+          <h1 className="page-title">{t('dashboard.title')}</h1>
           <div style={{ fontSize: 13, color: '#64748b', marginTop: 4 }}>{t('dashboard.subtitle')}</div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#0f172a', borderWidth: 1, borderStyle: 'solid', borderColor: '#1e293b', borderRadius: 8, padding: '8px 14px' }}>
+        <div className="status-pill" style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#0f172a', borderWidth: 1, borderStyle: 'solid', borderColor: '#1e293b', borderRadius: 8, padding: '8px 14px' }}>
           <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#22c55e', boxShadow: '0 0 6px #22c55e' }} />
           <span style={{ fontSize: 12, color: '#94a3b8', fontFamily: 'JetBrains Mono, monospace' }}>{t('dashboard.lastUpdated')}</span>
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 24 }}>
+      <div className="kpi-grid">
         {kpis.map((kpi) => (
           <div key={kpi.label} style={{ ...card, padding: '20px 22px', position: 'relative', overflow: 'hidden' }}>
             <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, ${kpi.color}, transparent)` }} />
@@ -106,7 +106,7 @@ export default function Dashboard() {
       </div>
 
       <div style={{ ...card, padding: '22px 24px', marginBottom: 24 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+        <div className="chart-header">
           <div>
             <div style={{ fontSize: 15, fontWeight: 600, color: '#e2e8f0' }}>{t('dashboard.chart.title')}</div>
             <div style={{ fontSize: 12, color: '#475569', fontFamily: 'JetBrains Mono, monospace', marginTop: 2 }}>{t('dashboard.chart.subtitle')}</div>
@@ -141,7 +141,7 @@ export default function Dashboard() {
       </div>
 
       <div style={{ ...card, overflow: 'hidden' }}>
-        <div style={{ padding: '18px 24px', borderBottomWidth: 1, borderBottomStyle: 'solid', borderBottomColor: '#1e293b', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div className="card-actions" style={{ padding: '18px 24px', borderBottomWidth: 1, borderBottomStyle: 'solid', borderBottomColor: '#1e293b' }}>
           <div>
             <div style={{ fontSize: 15, fontWeight: 600, color: '#e2e8f0' }}>{t('dashboard.incidents.title')}</div>
             <div style={{ fontSize: 12, color: '#475569', fontFamily: 'JetBrains Mono, monospace', marginTop: 2 }}>{t('dashboard.incidents.subtitle')}</div>
@@ -152,7 +152,8 @@ export default function Dashboard() {
             borderRadius: 6, color: '#00a3ff', fontSize: 12, cursor: 'pointer', fontFamily: 'JetBrains Mono, monospace',
           }}>{t('dashboard.incidents.viewAll')}</button>
         </div>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <div className="table-scroll">
+        <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 640 }}>
           <thead>
             <tr style={{ borderBottomWidth: 1, borderBottomStyle: 'solid', borderBottomColor: '#1e293b' }}>
               {tableHeaders.map((h) => (
@@ -186,6 +187,7 @@ export default function Dashboard() {
             ))}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   )

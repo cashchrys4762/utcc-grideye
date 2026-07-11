@@ -99,39 +99,41 @@ export default function Reports() {
   }
 
   return (
-    <div style={{ padding: '28px 32px', minHeight: '100vh' }}>
+    <div className="page-content">
       <div style={{ marginBottom: 24 }}>
         <div style={{ fontSize: 11, color: '#00a3ff', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '0.12em', marginBottom: 4 }}>{t('reports.badge')}</div>
-        <h1 style={{ fontSize: 26, fontWeight: 700, fontFamily: 'Rajdhani, sans-serif', color: '#e2e8f0', margin: 0, letterSpacing: '0.02em' }}>{t('reports.title')}</h1>
+        <h1 className="page-title">{t('reports.title')}</h1>
       </div>
 
-      <div style={{ ...card, padding: '16px 22px', marginBottom: 22, display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+      <div className="filter-bar" style={{ ...card, padding: '16px 22px', marginBottom: 22 }}>
+        <div className="filter-field">
           <span style={{ fontSize: 12, color: '#64748b', fontFamily: 'JetBrains Mono, monospace' }}>{t('reports.from')}</span>
-          <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} style={inputStyle} />
+          <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} style={{ ...inputStyle, width: '100%' }} />
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div className="filter-field">
           <span style={{ fontSize: 12, color: '#64748b', fontFamily: 'JetBrains Mono, monospace' }}>{t('reports.to')}</span>
-          <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} style={inputStyle} />
+          <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} style={{ ...inputStyle, width: '100%' }} />
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div className="filter-field">
           <span style={{ fontSize: 12, color: '#64748b', fontFamily: 'JetBrains Mono, monospace' }}>{t('reports.location')}</span>
-          <select value={location} onChange={(e) => setLocation(e.target.value)} style={{ ...inputStyle, cursor: 'pointer' }}>
+          <select value={location} onChange={(e) => setLocation(e.target.value)} style={{ ...inputStyle, cursor: 'pointer', width: '100%' }}>
             {locationFilters.map((l) => <option key={l.value} value={l.value} style={{ background: '#0f172a' }}>{t(l.key)}</option>)}
           </select>
         </div>
+        <div className="filter-bar-actions">
         <button style={{
-          marginLeft: 'auto', padding: '8px 18px', background: 'linear-gradient(135deg, #00a3ff, #0066cc)',
-          borderWidth: 0, borderRadius: 8, color: 'white', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'JetBrains Mono, monospace',
+          padding: '8px 18px', background: 'linear-gradient(135deg, #00a3ff, #0066cc)',
+          borderWidth: 0, borderRadius: 8, color: 'white', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'JetBrains Mono, monospace', width: '100%',
         }}>{t('reports.generateReport')}</button>
         <button style={{
           padding: '8px 18px', background: 'rgba(0,163,255,0.08)',
           borderWidth: 1, borderStyle: 'solid', borderColor: 'rgba(0,163,255,0.25)',
-          borderRadius: 8, color: '#00a3ff', fontSize: 13, cursor: 'pointer', fontFamily: 'JetBrains Mono, monospace',
+          borderRadius: 8, color: '#00a3ff', fontSize: 13, cursor: 'pointer', fontFamily: 'JetBrains Mono, monospace', width: '100%',
         }}>{t('reports.exportCsv')}</button>
+        </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 22 }}>
+      <div className="charts-grid">
         <div style={{ ...card, padding: '22px 24px' }}>
           <div style={{ fontSize: 15, fontWeight: 600, color: '#e2e8f0', marginBottom: 4 }}>{t('reports.causesTitle')}</div>
           <div style={{ fontSize: 12, color: '#475569', fontFamily: 'JetBrains Mono, monospace', marginBottom: 16 }}>{t('reports.causesSubtitle')}</div>
@@ -202,8 +204,8 @@ export default function Reports() {
             </div>
           </div>
         </div>
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <div className="table-scroll">
+          <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 560 }}>
             <thead>
               <tr style={{ borderBottomWidth: 1, borderBottomStyle: 'solid', borderBottomColor: '#1e293b' }}>
                 {tableHeaders.map((h) => (
