@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 
 const trafficData = [
@@ -12,74 +13,77 @@ const trafficData = [
 ]
 
 const incidents = [
-  { id: 'INC-0847', time: '18:42', location: 'Lat Phrao Rd / Kaset-Nawamin', type: 'Multi-Vehicle Collision', severity: 'high', cam: 'CAM-LP-03' },
-  { id: 'INC-0846', time: '18:21', location: 'Sukhumvit Soi 71', type: 'Pedestrian Conflict', severity: 'medium', cam: 'CAM-SK-12' },
-  { id: 'INC-0845', time: '17:58', location: 'Ratchadaphisek Rd', type: 'Red Light Violation', severity: 'low', cam: 'CAM-RD-07' },
-  { id: 'INC-0844', time: '17:39', location: 'Chatuchak Intersection', type: 'Congestion Alert', severity: 'medium', cam: 'CAM-CK-01' },
-  { id: 'INC-0843', time: '17:12', location: 'HuaiKhwang District', type: 'Wrong-Way Driver', severity: 'high', cam: 'CAM-HK-04' },
-  { id: 'INC-0842', time: '16:55', location: 'Phetchaburi Rd', type: 'Lane Obstruction', severity: 'low', cam: 'CAM-PB-09' },
+  { id: 'INC-0847', time: '18:42', locationKey: 'locations.latPhraoKaset', typeKey: 'incidentTypes.multiVehicleCollision', severity: 'high', cam: 'CAM-LP-03' },
+  { id: 'INC-0846', time: '18:21', locationKey: 'locations.sukhumvitSoi71', typeKey: 'incidentTypes.pedestrianConflict', severity: 'medium', cam: 'CAM-SK-12' },
+  { id: 'INC-0845', time: '17:58', locationKey: 'locations.ratchadaphisek', typeKey: 'incidentTypes.redLightViolation', severity: 'low', cam: 'CAM-RD-07' },
+  { id: 'INC-0844', time: '17:39', locationKey: 'locations.chatuchak', typeKey: 'incidentTypes.congestionAlert', severity: 'medium', cam: 'CAM-CK-01' },
+  { id: 'INC-0843', time: '17:12', locationKey: 'locations.huaiKhwang', typeKey: 'incidentTypes.wrongWayDriver', severity: 'high', cam: 'CAM-HK-04' },
+  { id: 'INC-0842', time: '16:55', locationKey: 'locations.phetchaburi', typeKey: 'incidentTypes.laneObstruction', severity: 'low', cam: 'CAM-PB-09' },
 ]
-
-const kpis = [
-  {
-    label: 'Traffic Volume', value: '84,293', unit: 'vehicles/day', delta: '+12.4%', up: true, color: '#00a3ff',
-    icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00a3ff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="3" width="15" height="13" rx="2" /><path d="M16 8h4l3 5v3h-7V8z" /><circle cx="5.5" cy="18.5" r="2.5" /><circle cx="18.5" cy="18.5" r="2.5" /></svg>,
-  },
-  {
-    label: 'Active Incidents', value: '14', unit: 'ongoing events', delta: '+3 from avg', up: false, color: '#ef4444',
-    icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>,
-  },
-  {
-    label: 'System Accuracy', value: '97.8%', unit: 'detection rate', delta: '+0.3% this week', up: true, color: '#22c55e',
-    icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>,
-  },
-  {
-    label: 'Avg Latency', value: '38ms', unit: 'inference time', delta: '-4ms improved', up: true, color: '#a855f7',
-    icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a855f7" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>,
-  },
-]
-
-const severityStyle = {
-  high: { bg: 'rgba(239,68,68,0.12)', color: '#ef4444', label: 'HIGH' },
-  medium: { bg: 'rgba(245,158,11,0.12)', color: '#f59e0b', label: 'MED' },
-  low: { bg: 'rgba(34,197,94,0.12)', color: '#22c55e', label: 'LOW' },
-}
-
-const CustomTooltip = ({ active, payload, label }: any) => {
-  if (active && payload && payload.length) {
-    return (
-      <div style={{ background: '#0f172a', borderWidth: 1, borderStyle: 'solid', borderColor: '#1e293b', borderRadius: 8, padding: '10px 14px', fontFamily: 'JetBrains Mono, monospace', fontSize: 12 }}>
-        <div style={{ color: '#64748b', marginBottom: 4 }}>{label}</div>
-        <div style={{ color: '#00a3ff', fontWeight: 600 }}>{payload[0]?.value?.toLocaleString()} vehicles</div>
-      </div>
-    )
-  }
-  return null
-}
 
 const card = {
   background: '#0a1628',
-  borderWidth: 1, borderStyle: 'solid', borderColor: '#1e293b',
+  borderWidth: 1, borderStyle: 'solid' as const, borderColor: '#1e293b',
   borderRadius: 12,
 }
 
 export default function Dashboard() {
+  const { t } = useTranslation()
+
+  const kpis = [
+    {
+      label: t('dashboard.kpi.trafficVolume'), value: '84,293', unit: t('dashboard.kpi.trafficVolumeUnit'), delta: t('dashboard.kpi.trafficVolumeDelta'), up: true, color: '#00a3ff',
+      icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00a3ff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="3" width="15" height="13" rx="2" /><path d="M16 8h4l3 5v3h-7V8z" /><circle cx="5.5" cy="18.5" r="2.5" /><circle cx="18.5" cy="18.5" r="2.5" /></svg>,
+    },
+    {
+      label: t('dashboard.kpi.activeIncidents'), value: '14', unit: t('dashboard.kpi.activeIncidentsUnit'), delta: t('dashboard.kpi.activeIncidentsDelta'), up: false, color: '#ef4444',
+      icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>,
+    },
+    {
+      label: t('dashboard.kpi.systemAccuracy'), value: '97.8%', unit: t('dashboard.kpi.systemAccuracyUnit'), delta: t('dashboard.kpi.systemAccuracyDelta'), up: true, color: '#22c55e',
+      icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>,
+    },
+    {
+      label: t('dashboard.kpi.avgLatency'), value: '38ms', unit: t('dashboard.kpi.avgLatencyUnit'), delta: t('dashboard.kpi.avgLatencyDelta'), up: true, color: '#a855f7',
+      icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a855f7" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>,
+    },
+  ]
+
+  const tableHeaders = [
+    'dashboard.incidents.headers.id',
+    'dashboard.incidents.headers.time',
+    'dashboard.incidents.headers.location',
+    'dashboard.incidents.headers.type',
+    'dashboard.incidents.headers.severity',
+    'dashboard.incidents.headers.camera',
+  ]
+
+  const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: { value?: number }[]; label?: string }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div style={{ background: '#0f172a', borderWidth: 1, borderStyle: 'solid', borderColor: '#1e293b', borderRadius: 8, padding: '10px 14px', fontFamily: 'JetBrains Mono, monospace', fontSize: 12 }}>
+          <div style={{ color: '#64748b', marginBottom: 4 }}>{label}</div>
+          <div style={{ color: '#00a3ff', fontWeight: 600 }}>{payload[0]?.value?.toLocaleString()} {t('dashboard.vehicles')}</div>
+        </div>
+      )
+    }
+    return null
+  }
+
   return (
     <div style={{ padding: '28px 32px', minHeight: '100vh' }}>
-      {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 28 }}>
         <div>
-          <div style={{ fontSize: 11, color: '#00a3ff', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '0.12em', marginBottom: 4 }}>OVERVIEW DASHBOARD</div>
-          <h1 style={{ fontSize: 26, fontWeight: 700, fontFamily: 'Rajdhani, sans-serif', color: '#e2e8f0', margin: 0, letterSpacing: '0.02em' }}>Traffic Intelligence Center</h1>
-          <div style={{ fontSize: 13, color: '#64748b', marginTop: 4 }}>Bangkok Metropolitan Region — Real-time monitoring</div>
+          <div style={{ fontSize: 11, color: '#00a3ff', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '0.12em', marginBottom: 4 }}>{t('dashboard.badge')}</div>
+          <h1 style={{ fontSize: 26, fontWeight: 700, fontFamily: 'Rajdhani, sans-serif', color: '#e2e8f0', margin: 0, letterSpacing: '0.02em' }}>{t('dashboard.title')}</h1>
+          <div style={{ fontSize: 13, color: '#64748b', marginTop: 4 }}>{t('dashboard.subtitle')}</div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#0f172a', borderWidth: 1, borderStyle: 'solid', borderColor: '#1e293b', borderRadius: 8, padding: '8px 14px' }}>
           <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#22c55e', boxShadow: '0 0 6px #22c55e' }} />
-          <span style={{ fontSize: 12, color: '#94a3b8', fontFamily: 'JetBrains Mono, monospace' }}>Last updated: 18:47:03</span>
+          <span style={{ fontSize: 12, color: '#94a3b8', fontFamily: 'JetBrains Mono, monospace' }}>{t('dashboard.lastUpdated')}</span>
         </div>
       </div>
 
-      {/* KPI Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 24 }}>
         {kpis.map((kpi) => (
           <div key={kpi.label} style={{ ...card, padding: '20px 22px', position: 'relative', overflow: 'hidden' }}>
@@ -101,22 +105,21 @@ export default function Dashboard() {
         ))}
       </div>
 
-      {/* Chart */}
       <div style={{ ...card, padding: '22px 24px', marginBottom: 24 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
           <div>
-            <div style={{ fontSize: 15, fontWeight: 600, color: '#e2e8f0' }}>Hourly Traffic Flow</div>
-            <div style={{ fontSize: 12, color: '#475569', fontFamily: 'JetBrains Mono, monospace', marginTop: 2 }}>24-hour vehicle count — Bangkok Grid Network</div>
+            <div style={{ fontSize: 15, fontWeight: 600, color: '#e2e8f0' }}>{t('dashboard.chart.title')}</div>
+            <div style={{ fontSize: 12, color: '#475569', fontFamily: 'JetBrains Mono, monospace', marginTop: 2 }}>{t('dashboard.chart.subtitle')}</div>
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
-            {['24h', '7d', '30d'].map((t, i) => (
-              <button key={t} style={{
+            {['24h', '7d', '30d'].map((period, i) => (
+              <button key={period} style={{
                 padding: '5px 12px', borderRadius: 6,
                 borderWidth: 1, borderStyle: 'solid', borderColor: i === 0 ? '#00a3ff' : '#1e293b',
                 background: i === 0 ? 'rgba(0,163,255,0.1)' : 'transparent',
                 color: i === 0 ? '#00a3ff' : '#64748b',
                 fontSize: 12, cursor: 'pointer', fontFamily: 'JetBrains Mono, monospace',
-              }}>{t}</button>
+              }}>{period}</button>
             ))}
           </div>
         </div>
@@ -137,49 +140,50 @@ export default function Dashboard() {
         </ResponsiveContainer>
       </div>
 
-      {/* Incidents Table */}
       <div style={{ ...card, overflow: 'hidden' }}>
         <div style={{ padding: '18px 24px', borderBottomWidth: 1, borderBottomStyle: 'solid', borderBottomColor: '#1e293b', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <div style={{ fontSize: 15, fontWeight: 600, color: '#e2e8f0' }}>Recent Incident Summary</div>
-            <div style={{ fontSize: 12, color: '#475569', fontFamily: 'JetBrains Mono, monospace', marginTop: 2 }}>Last 6 events — auto-refreshing</div>
+            <div style={{ fontSize: 15, fontWeight: 600, color: '#e2e8f0' }}>{t('dashboard.incidents.title')}</div>
+            <div style={{ fontSize: 12, color: '#475569', fontFamily: 'JetBrains Mono, monospace', marginTop: 2 }}>{t('dashboard.incidents.subtitle')}</div>
           </div>
           <button style={{
             padding: '6px 14px', background: 'rgba(0,163,255,0.1)',
             borderWidth: 1, borderStyle: 'solid', borderColor: 'rgba(0,163,255,0.3)',
             borderRadius: 6, color: '#00a3ff', fontSize: 12, cursor: 'pointer', fontFamily: 'JetBrains Mono, monospace',
-          }}>VIEW ALL →</button>
+          }}>{t('dashboard.incidents.viewAll')}</button>
         </div>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr style={{ borderBottomWidth: 1, borderBottomStyle: 'solid', borderBottomColor: '#1e293b' }}>
-              {['Incident ID', 'Time', 'Location', 'Type', 'Severity', 'Camera'].map((h) => (
+              {tableHeaders.map((h) => (
                 <th key={h} style={{ padding: '10px 20px', textAlign: 'left', fontSize: 11, fontWeight: 600, color: '#475569', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '0.06em' }}>
-                  {h.toUpperCase()}
+                  {t(h).toUpperCase()}
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {incidents.map((inc, i) => {
-              const sev = severityStyle[inc.severity as keyof typeof severityStyle]
-              return (
-                <tr key={inc.id}
-                  style={{ borderBottomWidth: i < incidents.length - 1 ? 1 : 0, borderBottomStyle: 'solid', borderBottomColor: '#0f172a' }}
-                  onMouseEnter={(e) => { (e.currentTarget as HTMLTableRowElement).style.background = '#0f172a' }}
-                  onMouseLeave={(e) => { (e.currentTarget as HTMLTableRowElement).style.background = 'transparent' }}
-                >
-                  <td style={{ padding: '13px 20px' }}><span style={{ fontSize: 13, fontFamily: 'JetBrains Mono, monospace', color: '#00a3ff', fontWeight: 500 }}>{inc.id}</span></td>
-                  <td style={{ padding: '13px 20px' }}><span style={{ fontSize: 13, fontFamily: 'JetBrains Mono, monospace', color: '#94a3b8' }}>{inc.time}</span></td>
-                  <td style={{ padding: '13px 20px' }}><span style={{ fontSize: 13, color: '#cbd5e1' }}>{inc.location}</span></td>
-                  <td style={{ padding: '13px 20px' }}><span style={{ fontSize: 13, color: '#94a3b8' }}>{inc.type}</span></td>
-                  <td style={{ padding: '13px 20px' }}>
-                    <span style={{ fontSize: 11, fontWeight: 700, fontFamily: 'JetBrains Mono, monospace', color: sev.color, background: sev.bg, borderRadius: 4, padding: '3px 8px' }}>{sev.label}</span>
-                  </td>
-                  <td style={{ padding: '13px 20px' }}><span style={{ fontSize: 12, fontFamily: 'JetBrains Mono, monospace', color: '#64748b' }}>{inc.cam}</span></td>
-                </tr>
-              )
-            })}
+            {incidents.map((inc, i) => (
+              <tr key={inc.id}
+                style={{ borderBottomWidth: i < incidents.length - 1 ? 1 : 0, borderBottomStyle: 'solid', borderBottomColor: '#0f172a' }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLTableRowElement).style.background = '#0f172a' }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLTableRowElement).style.background = 'transparent' }}
+              >
+                <td style={{ padding: '13px 20px' }}><span style={{ fontSize: 13, fontFamily: 'JetBrains Mono, monospace', color: '#00a3ff', fontWeight: 500 }}>{inc.id}</span></td>
+                <td style={{ padding: '13px 20px' }}><span style={{ fontSize: 13, fontFamily: 'JetBrains Mono, monospace', color: '#94a3b8' }}>{inc.time}</span></td>
+                <td style={{ padding: '13px 20px' }}><span style={{ fontSize: 13, color: '#cbd5e1' }}>{t(inc.locationKey)}</span></td>
+                <td style={{ padding: '13px 20px' }}><span style={{ fontSize: 13, color: '#94a3b8' }}>{t(inc.typeKey)}</span></td>
+                <td style={{ padding: '13px 20px' }}>
+                  <span style={{
+                    fontSize: 11, fontWeight: 700, fontFamily: 'JetBrains Mono, monospace',
+                    color: inc.severity === 'high' ? '#ef4444' : inc.severity === 'medium' ? '#f59e0b' : '#22c55e',
+                    background: inc.severity === 'high' ? 'rgba(239,68,68,0.12)' : inc.severity === 'medium' ? 'rgba(245,158,11,0.12)' : 'rgba(34,197,94,0.12)',
+                    borderRadius: 4, padding: '3px 8px',
+                  }}>{t(`severity.${inc.severity}`)}</span>
+                </td>
+                <td style={{ padding: '13px 20px' }}><span style={{ fontSize: 12, fontFamily: 'JetBrains Mono, monospace', color: '#64748b' }}>{inc.cam}</span></td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>

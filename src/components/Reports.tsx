@@ -1,39 +1,47 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 
-const causeData = [
-  { name: 'Speeding', value: 32, color: '#ef4444' },
-  { name: 'Red Light Violation', value: 24, color: '#f59e0b' },
-  { name: 'Distracted Driving', value: 18, color: '#00a3ff' },
-  { name: 'Lane Change', value: 14, color: '#a855f7' },
-  { name: 'Road Condition', value: 8, color: '#22c55e' },
-  { name: 'Other', value: 4, color: '#475569' },
+const causeKeys = [
+  { key: 'causes.speeding', value: 32, color: '#ef4444' },
+  { key: 'causes.redLightViolation', value: 24, color: '#f59e0b' },
+  { key: 'causes.distractedDriving', value: 18, color: '#00a3ff' },
+  { key: 'causes.laneChange', value: 14, color: '#a855f7' },
+  { key: 'causes.roadCondition', value: 8, color: '#22c55e' },
+  { key: 'causes.other', value: 4, color: '#475569' },
 ]
 
 const tableData = [
-  { date: '2024-07-10', location: 'Lat Phrao / Kaset-Nawamin', type: 'Multi-Vehicle Collision', risk: 9.2 },
-  { date: '2024-07-10', location: 'Sukhumvit Soi 71', type: 'Pedestrian Conflict', risk: 6.7 },
-  { date: '2024-07-10', location: 'Ratchadaphisek Rd', type: 'Red Light Violation', risk: 4.1 },
-  { date: '2024-07-10', location: 'Chatuchak Intersection', type: 'Congestion Alert', risk: 5.8 },
-  { date: '2024-07-09', location: 'HuaiKhwang District', type: 'Wrong-Way Driver', risk: 9.7 },
-  { date: '2024-07-09', location: 'Phetchaburi Rd', type: 'Lane Obstruction', risk: 3.2 },
-  { date: '2024-07-09', location: 'Vibhavadi Rangsit Rd', type: 'Speed Violation', risk: 4.5 },
-  { date: '2024-07-09', location: 'Din Daeng Flyover', type: 'Multi-Vehicle Collision', risk: 8.9 },
-  { date: '2024-07-08', location: 'Ari BTS Station Area', type: 'Pedestrian Conflict', risk: 6.1 },
-  { date: '2024-07-08', location: 'Phahon Yothin Rd', type: 'Red Light Violation', risk: 3.8 },
-  { date: '2024-07-08', location: 'Ngamwongwan Rd', type: 'Vehicle Breakdown', risk: 4.4 },
-  { date: '2024-07-07', location: 'Outer Ring Rd East', type: 'Road Debris', risk: 2.9 },
+  { date: '2024-07-10', locationKey: 'locations.latPhraoKaset', typeKey: 'incidentTypes.multiVehicleCollision', risk: 9.2 },
+  { date: '2024-07-10', locationKey: 'locations.sukhumvitSoi71', typeKey: 'incidentTypes.pedestrianConflict', risk: 6.7 },
+  { date: '2024-07-10', locationKey: 'locations.ratchadaphisek', typeKey: 'incidentTypes.redLightViolation', risk: 4.1 },
+  { date: '2024-07-10', locationKey: 'locations.chatuchak', typeKey: 'incidentTypes.congestionAlert', risk: 5.8 },
+  { date: '2024-07-09', locationKey: 'locations.huaiKhwang', typeKey: 'incidentTypes.wrongWayDriver', risk: 9.7 },
+  { date: '2024-07-09', locationKey: 'locations.phetchaburi', typeKey: 'incidentTypes.laneObstruction', risk: 3.2 },
+  { date: '2024-07-09', locationKey: 'locations.vibhavadiRangsit', typeKey: 'incidentTypes.speedViolation', risk: 4.5 },
+  { date: '2024-07-09', locationKey: 'locations.dinDaeng', typeKey: 'incidentTypes.multiVehicleCollision', risk: 8.9 },
+  { date: '2024-07-08', locationKey: 'locations.ariBtsArea', typeKey: 'incidentTypes.pedestrianConflict', risk: 6.1 },
+  { date: '2024-07-08', locationKey: 'locations.phahonYothin', typeKey: 'incidentTypes.redLightViolation', risk: 3.8 },
+  { date: '2024-07-08', locationKey: 'locations.ngamwongwan', typeKey: 'incidentTypes.vehicleBreakdown', risk: 4.4 },
+  { date: '2024-07-07', locationKey: 'locations.outerRingEast', typeKey: 'incidentTypes.roadDebris', risk: 2.9 },
 ]
 
-const locations = ['All Locations', 'HuaiKhwang', 'Lat Phrao', 'Sukhumvit', 'Ratchadaphisek', 'Chatuchak']
+const locationFilters = [
+  { value: 'all', key: 'locations.allLocations' },
+  { value: 'huaiKhwang', key: 'locations.huaiKhwangFilter' },
+  { value: 'latPhrao', key: 'locations.latPhraoFilter' },
+  { value: 'sukhumvit', key: 'locations.sukhumvitFilter' },
+  { value: 'ratchadaphisek', key: 'locations.ratchadaphisekFilter' },
+  { value: 'chatuchak', key: 'locations.chatuchakFilter' },
+]
 
 const hotspots = [
-  { name: 'HuaiKhwang District', count: 47, x: 62, y: 38 },
-  { name: 'Lat Phrao Junction', count: 39, x: 44, y: 25 },
-  { name: 'Chatuchak Int.', count: 31, x: 30, y: 42 },
-  { name: 'Din Daeng', count: 26, x: 50, y: 55 },
-  { name: 'Sukhumvit Soi 71', count: 22, x: 72, y: 65 },
-  { name: 'Ratchadaphisek', count: 18, x: 40, y: 62 },
+  { nameKey: 'locations.huaiKhwang', count: 47, x: 62, y: 38 },
+  { nameKey: 'locations.latPhraoJunction', count: 39, x: 44, y: 25 },
+  { nameKey: 'locations.chatuchakShort', count: 31, x: 30, y: 42 },
+  { nameKey: 'locations.dinDaengHotspot', count: 26, x: 50, y: 55 },
+  { nameKey: 'locations.sukhumvitSoi71', count: 22, x: 72, y: 65 },
+  { nameKey: 'locations.ratchadaphisekFilter', count: 18, x: 40, y: 62 },
 ]
 
 function RiskBar({ score }: { score: number }) {
@@ -48,19 +56,7 @@ function RiskBar({ score }: { score: number }) {
   )
 }
 
-const CustomPieTooltip = ({ active, payload }: any) => {
-  if (active && payload && payload.length) {
-    return (
-      <div style={{ background: '#0f172a', borderWidth: 1, borderStyle: 'solid', borderColor: '#1e293b', borderRadius: 8, padding: '10px 14px', fontFamily: 'JetBrains Mono, monospace', fontSize: 12 }}>
-        <div style={{ color: payload[0].payload.color, fontWeight: 700 }}>{payload[0].name}</div>
-        <div style={{ color: '#94a3b8', marginTop: 2 }}>{payload[0].value}% of incidents</div>
-      </div>
-    )
-  }
-  return null
-}
-
-const card = { background: '#0a1628', borderWidth: 1, borderStyle: 'solid', borderColor: '#1e293b', borderRadius: 12 }
+const card = { background: '#0a1628', borderWidth: 1, borderStyle: 'solid' as const, borderColor: '#1e293b', borderRadius: 12 }
 
 const inputStyle: React.CSSProperties = {
   background: '#0f172a', borderWidth: 1, borderStyle: 'solid', borderColor: '#1e293b',
@@ -69,51 +65,76 @@ const inputStyle: React.CSSProperties = {
 }
 
 export default function Reports() {
+  const { t } = useTranslation()
   const [dateFrom, setDateFrom] = useState('2024-07-07')
   const [dateTo, setDateTo] = useState('2024-07-10')
-  const [location, setLocation] = useState('All Locations')
+  const [location, setLocation] = useState('all')
   const [sortCol, setSortCol] = useState('date')
+
+  const causeData = causeKeys.map((c) => ({ name: t(c.key), value: c.value, color: c.color }))
+  const sortLabels: Record<string, string> = {
+    date: t('reports.headers.date'),
+    location: t('reports.headers.location'),
+    type: t('reports.headers.type'),
+    risk: t('reports.headers.risk'),
+  }
+
+  const tableHeaders = [
+    { id: 'date', key: 'reports.headers.date' },
+    { id: 'location', key: 'reports.headers.location' },
+    { id: 'type', key: 'reports.headers.type' },
+    { id: 'risk', key: 'reports.headers.risk' },
+  ]
+
+  const CustomPieTooltip = ({ active, payload }: { active?: boolean; payload?: { name?: string; value?: number; payload?: { color?: string } }[] }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div style={{ background: '#0f172a', borderWidth: 1, borderStyle: 'solid', borderColor: '#1e293b', borderRadius: 8, padding: '10px 14px', fontFamily: 'JetBrains Mono, monospace', fontSize: 12 }}>
+          <div style={{ color: payload[0].payload?.color, fontWeight: 700 }}>{payload[0].name}</div>
+          <div style={{ color: '#94a3b8', marginTop: 2 }}>{payload[0].value}{t('reports.percentOfIncidents')}</div>
+        </div>
+      )
+    }
+    return null
+  }
 
   return (
     <div style={{ padding: '28px 32px', minHeight: '100vh' }}>
       <div style={{ marginBottom: 24 }}>
-        <div style={{ fontSize: 11, color: '#00a3ff', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '0.12em', marginBottom: 4 }}>ANALYTICS & REPORTS</div>
-        <h1 style={{ fontSize: 26, fontWeight: 700, fontFamily: 'Rajdhani, sans-serif', color: '#e2e8f0', margin: 0, letterSpacing: '0.02em' }}>Incident Analytics</h1>
+        <div style={{ fontSize: 11, color: '#00a3ff', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '0.12em', marginBottom: 4 }}>{t('reports.badge')}</div>
+        <h1 style={{ fontSize: 26, fontWeight: 700, fontFamily: 'Rajdhani, sans-serif', color: '#e2e8f0', margin: 0, letterSpacing: '0.02em' }}>{t('reports.title')}</h1>
       </div>
 
-      {/* Filter Bar */}
       <div style={{ ...card, padding: '16px 22px', marginBottom: 22, display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ fontSize: 12, color: '#64748b', fontFamily: 'JetBrains Mono, monospace' }}>FROM</span>
+          <span style={{ fontSize: 12, color: '#64748b', fontFamily: 'JetBrains Mono, monospace' }}>{t('reports.from')}</span>
           <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} style={inputStyle} />
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ fontSize: 12, color: '#64748b', fontFamily: 'JetBrains Mono, monospace' }}>TO</span>
+          <span style={{ fontSize: 12, color: '#64748b', fontFamily: 'JetBrains Mono, monospace' }}>{t('reports.to')}</span>
           <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} style={inputStyle} />
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ fontSize: 12, color: '#64748b', fontFamily: 'JetBrains Mono, monospace' }}>LOCATION</span>
+          <span style={{ fontSize: 12, color: '#64748b', fontFamily: 'JetBrains Mono, monospace' }}>{t('reports.location')}</span>
           <select value={location} onChange={(e) => setLocation(e.target.value)} style={{ ...inputStyle, cursor: 'pointer' }}>
-            {locations.map((l) => <option key={l} value={l} style={{ background: '#0f172a' }}>{l}</option>)}
+            {locationFilters.map((l) => <option key={l.value} value={l.value} style={{ background: '#0f172a' }}>{t(l.key)}</option>)}
           </select>
         </div>
         <button style={{
           marginLeft: 'auto', padding: '8px 18px', background: 'linear-gradient(135deg, #00a3ff, #0066cc)',
           borderWidth: 0, borderRadius: 8, color: 'white', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'JetBrains Mono, monospace',
-        }}>GENERATE REPORT</button>
+        }}>{t('reports.generateReport')}</button>
         <button style={{
           padding: '8px 18px', background: 'rgba(0,163,255,0.08)',
           borderWidth: 1, borderStyle: 'solid', borderColor: 'rgba(0,163,255,0.25)',
           borderRadius: 8, color: '#00a3ff', fontSize: 13, cursor: 'pointer', fontFamily: 'JetBrains Mono, monospace',
-        }}>EXPORT CSV</button>
+        }}>{t('reports.exportCsv')}</button>
       </div>
 
-      {/* Charts row */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 22 }}>
-        {/* Pie */}
         <div style={{ ...card, padding: '22px 24px' }}>
-          <div style={{ fontSize: 15, fontWeight: 600, color: '#e2e8f0', marginBottom: 4 }}>Accident Causes</div>
-          <div style={{ fontSize: 12, color: '#475569', fontFamily: 'JetBrains Mono, monospace', marginBottom: 16 }}>Distribution by primary cause — 847 events</div>
+          <div style={{ fontSize: 15, fontWeight: 600, color: '#e2e8f0', marginBottom: 4 }}>{t('reports.causesTitle')}</div>
+          <div style={{ fontSize: 12, color: '#475569', fontFamily: 'JetBrains Mono, monospace', marginBottom: 16 }}>{t('reports.causesSubtitle')}</div>
           <ResponsiveContainer width="100%" height={260}>
             <PieChart>
               <Pie data={causeData} cx="50%" cy="50%" innerRadius={70} outerRadius={110} paddingAngle={3} dataKey="value">
@@ -125,11 +146,10 @@ export default function Reports() {
           </ResponsiveContainer>
         </div>
 
-        {/* Map */}
         <div style={{ ...card, overflow: 'hidden', position: 'relative' }}>
           <div style={{ padding: '22px 24px 14px' }}>
-            <div style={{ fontSize: 15, fontWeight: 600, color: '#e2e8f0', marginBottom: 4 }}>Hotspot Areas</div>
-            <div style={{ fontSize: 12, color: '#475569', fontFamily: 'JetBrains Mono, monospace' }}>Bangkok Metropolitan Region — Incident density</div>
+            <div style={{ fontSize: 15, fontWeight: 600, color: '#e2e8f0', marginBottom: 4 }}>{t('reports.hotspotTitle')}</div>
+            <div style={{ fontSize: 12, color: '#475569', fontFamily: 'JetBrains Mono, monospace' }}>{t('reports.hotspotSubtitle')}</div>
           </div>
           <div style={{ position: 'relative', margin: '0 24px 20px', height: 248, background: '#040d1a', borderRadius: 8, overflow: 'hidden', borderWidth: 1, borderStyle: 'solid', borderColor: '#1e293b' }}>
             <div style={{ position: 'absolute', inset: 0, opacity: 0.15, backgroundImage: 'linear-gradient(#00a3ff 1px, transparent 1px), linear-gradient(90deg, #00a3ff 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
@@ -145,7 +165,7 @@ export default function Reports() {
               const radius = 6 + (h.count / 47) * 20
               const alpha = 0.2 + (h.count / 47) * 0.35
               return (
-                <div key={h.name} style={{ position: 'absolute', left: `${h.x}%`, top: `${h.y}%`, transform: 'translate(-50%,-50%)' }}>
+                <div key={h.nameKey} style={{ position: 'absolute', left: `${h.x}%`, top: `${h.y}%`, transform: 'translate(-50%,-50%)' }}>
                   <div style={{
                     width: radius * 2, height: radius * 2, borderRadius: '50%',
                     background: `rgba(239,68,68,${alpha})`,
@@ -161,37 +181,38 @@ export default function Reports() {
               )
             })}
             <div style={{ position: 'absolute', bottom: 10, right: 10, background: 'rgba(5,14,26,0.85)', borderWidth: 1, borderStyle: 'solid', borderColor: '#1e293b', borderRadius: 6, padding: '6px 10px' }}>
-              <div style={{ fontSize: 10, color: '#475569', fontFamily: 'JetBrains Mono, monospace', marginBottom: 4 }}>INCIDENT DENSITY</div>
+              <div style={{ fontSize: 10, color: '#475569', fontFamily: 'JetBrains Mono, monospace', marginBottom: 4 }}>{t('reports.incidentDensity')}</div>
               <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
                 {[0.2, 0.4, 0.6, 0.8, 1].map((o) => (
                   <div key={o} style={{ width: 12, height: 12, borderRadius: 2, background: `rgba(239,68,68,${o})` }} />
                 ))}
-                <span style={{ fontSize: 10, color: '#475569', fontFamily: 'JetBrains Mono, monospace', marginLeft: 4 }}>HIGH</span>
+                <span style={{ fontSize: 10, color: '#475569', fontFamily: 'JetBrains Mono, monospace', marginLeft: 4 }}>{t('reports.high')}</span>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Data Table */}
       <div style={{ ...card, overflow: 'hidden' }}>
         <div style={{ padding: '18px 24px', borderBottomWidth: 1, borderBottomStyle: 'solid', borderBottomColor: '#1e293b', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <div style={{ fontSize: 15, fontWeight: 600, color: '#e2e8f0' }}>Incident Detail Table</div>
-            <div style={{ fontSize: 12, color: '#475569', fontFamily: 'JetBrains Mono, monospace', marginTop: 2 }}>{tableData.length} records — sorted by {sortCol}</div>
+            <div style={{ fontSize: 15, fontWeight: 600, color: '#e2e8f0' }}>{t('reports.tableTitle')}</div>
+            <div style={{ fontSize: 12, color: '#475569', fontFamily: 'JetBrains Mono, monospace', marginTop: 2 }}>
+              {t('reports.recordsSorted', { count: tableData.length, sort: sortLabels[sortCol] ?? sortCol })}
+            </div>
           </div>
         </div>
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ borderBottomWidth: 1, borderBottomStyle: 'solid', borderBottomColor: '#1e293b' }}>
-                {['Date', 'Location', 'Accident Type', 'Risk Score'].map((h) => (
-                  <th key={h} onClick={() => setSortCol(h.toLowerCase())} style={{
+                {tableHeaders.map((h) => (
+                  <th key={h.id} onClick={() => setSortCol(h.id)} style={{
                     padding: '10px 22px', textAlign: 'left', fontSize: 11, fontWeight: 600,
-                    color: sortCol === h.toLowerCase() ? '#00a3ff' : '#475569',
+                    color: sortCol === h.id ? '#00a3ff' : '#475569',
                     fontFamily: 'JetBrains Mono, monospace', letterSpacing: '0.06em', cursor: 'pointer', userSelect: 'none', whiteSpace: 'nowrap',
                   }}>
-                    {h.toUpperCase()} {sortCol === h.toLowerCase() ? '↑' : ''}
+                    {t(h.key).toUpperCase()} {sortCol === h.id ? '↑' : ''}
                   </th>
                 ))}
               </tr>
@@ -204,8 +225,8 @@ export default function Reports() {
                   onMouseLeave={(e) => { (e.currentTarget as HTMLTableRowElement).style.background = 'transparent' }}
                 >
                   <td style={{ padding: '12px 22px' }}><span style={{ fontSize: 13, fontFamily: 'JetBrains Mono, monospace', color: '#64748b' }}>{row.date}</span></td>
-                  <td style={{ padding: '12px 22px' }}><span style={{ fontSize: 13, color: '#cbd5e1' }}>{row.location}</span></td>
-                  <td style={{ padding: '12px 22px' }}><span style={{ fontSize: 13, color: '#94a3b8' }}>{row.type}</span></td>
+                  <td style={{ padding: '12px 22px' }}><span style={{ fontSize: 13, color: '#cbd5e1' }}>{t(row.locationKey)}</span></td>
+                  <td style={{ padding: '12px 22px' }}><span style={{ fontSize: 13, color: '#94a3b8' }}>{t(row.typeKey)}</span></td>
                   <td style={{ padding: '12px 22px', minWidth: 160 }}><RiskBar score={row.risk} /></td>
                 </tr>
               ))}

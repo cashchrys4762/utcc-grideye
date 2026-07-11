@@ -1,4 +1,6 @@
+import { useTranslation } from 'react-i18next'
 import type { Screen } from '../App'
+import LanguageSwitcher from './LanguageSwitcher'
 
 interface Props {
   active: Screen
@@ -8,10 +10,10 @@ interface Props {
 const ICON_INACTIVE = '#64748b'
 const ICON_ACTIVE = '#00a3ff'
 
-const nav: { id: Screen; label: string; icon: (active: boolean) => JSX.Element }[] = [
+const navItems: { id: Screen; labelKey: string; icon: (active: boolean) => JSX.Element }[] = [
   {
     id: 'dashboard',
-    label: 'Dashboard',
+    labelKey: 'nav.dashboard',
     icon: (a) => (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={a ? ICON_ACTIVE : ICON_INACTIVE} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" />
@@ -21,7 +23,7 @@ const nav: { id: Screen; label: string; icon: (active: boolean) => JSX.Element }
   },
   {
     id: 'livefeed',
-    label: 'Live Feed',
+    labelKey: 'nav.liveFeed',
     icon: (a) => (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={a ? ICON_ACTIVE : ICON_INACTIVE} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="2" /><path d="M6.3 6.3a8 8 0 0 0 0 11.4" /><path d="M17.7 6.3a8 8 0 0 1 0 11.4" />
@@ -31,7 +33,7 @@ const nav: { id: Screen; label: string; icon: (active: boolean) => JSX.Element }
   },
   {
     id: 'reports',
-    label: 'Reports',
+    labelKey: 'nav.reports',
     icon: (a) => (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={a ? ICON_ACTIVE : ICON_INACTIVE} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" />
@@ -41,7 +43,7 @@ const nav: { id: Screen; label: string; icon: (active: boolean) => JSX.Element }
   },
   {
     id: 'settings',
-    label: 'Settings',
+    labelKey: 'nav.settings',
     icon: (a) => (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={a ? ICON_ACTIVE : ICON_INACTIVE} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="3" />
@@ -52,6 +54,8 @@ const nav: { id: Screen; label: string; icon: (active: boolean) => JSX.Element }
 ]
 
 export default function Sidebar({ active, onNavigate }: Props) {
+  const { t } = useTranslation()
+
   return (
     <aside
       style={{
@@ -68,7 +72,6 @@ export default function Sidebar({ active, onNavigate }: Props) {
         top: 0,
       }}
     >
-      {/* Logo */}
       <div style={{ padding: '24px 20px 20px', borderBottomWidth: 1, borderBottomStyle: 'solid', borderBottomColor: '#1e293b' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <div style={{
@@ -91,14 +94,16 @@ export default function Sidebar({ active, onNavigate }: Props) {
             </div>
           </div>
         </div>
+        <div style={{ marginTop: 14 }}>
+          <LanguageSwitcher />
+        </div>
       </div>
 
-      {/* Nav */}
       <nav style={{ flex: 1, padding: '12px 12px 0' }}>
         <div style={{ fontSize: 10, color: '#475569', letterSpacing: '0.12em', fontWeight: 600, padding: '8px 8px 4px', fontFamily: 'JetBrains Mono, monospace' }}>
-          NAVIGATION
+          {t('nav.navigation')}
         </div>
-        {nav.map((item) => {
+        {navItems.map((item) => {
           const isActive = active === item.id
           return (
             <button
@@ -127,14 +132,14 @@ export default function Sidebar({ active, onNavigate }: Props) {
               }}
             >
               {item.icon(isActive)}
-              {item.label}
+              {t(item.labelKey)}
               {item.id === 'livefeed' && (
                 <span style={{
                   marginLeft: 'auto', background: '#ef4444', color: 'white',
                   fontSize: 10, fontWeight: 700, borderRadius: 4, padding: '1px 6px',
                   fontFamily: 'JetBrains Mono, monospace', letterSpacing: '0.05em',
                 }}>
-                  LIVE
+                  {t('nav.live')}
                 </span>
               )}
             </button>
@@ -142,7 +147,6 @@ export default function Sidebar({ active, onNavigate }: Props) {
         })}
       </nav>
 
-      {/* System Status */}
       <div style={{ padding: '16px 20px', borderTopWidth: 1, borderTopStyle: 'solid', borderTopColor: '#1e293b' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
           <div style={{
@@ -150,23 +154,16 @@ export default function Sidebar({ active, onNavigate }: Props) {
             boxShadow: '0 0 8px #22c55e',
           }} />
           <span style={{ fontSize: 12, color: '#22c55e', fontFamily: 'JetBrains Mono, monospace', fontWeight: 600, letterSpacing: '0.05em' }}>
-            SYSTEM: ONLINE
+            {t('nav.systemOnline')}
           </span>
         </div>
         <div style={{ fontSize: 11, color: '#475569', fontFamily: 'JetBrains Mono, monospace' }}>
-          v2.4.1 — Bangkok Grid
+          {t('nav.version')}
         </div>
         <div style={{ fontSize: 11, color: '#475569', fontFamily: 'JetBrains Mono, monospace', marginTop: 2 }}>
-          47 cameras active
+          {t('nav.camerasActive')}
         </div>
       </div>
-
-      <style>{`
-        @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.5; }
-        }
-      `}</style>
     </aside>
   )
 }

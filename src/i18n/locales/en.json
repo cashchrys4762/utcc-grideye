@@ -1,0 +1,231 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "liveFeed": "Live Feed",
+    "reports": "Reports",
+    "settings": "Settings",
+    "navigation": "NAVIGATION",
+    "live": "LIVE",
+    "systemOnline": "SYSTEM: ONLINE",
+    "version": "v2.4.1 — Bangkok Grid",
+    "camerasActive": "47 cameras active"
+  },
+  "dashboard": {
+    "badge": "OVERVIEW DASHBOARD",
+    "title": "Traffic Intelligence Center",
+    "subtitle": "Bangkok Metropolitan Region — Real-time monitoring",
+    "lastUpdated": "Last updated: 18:47:03",
+    "vehicles": "vehicles",
+    "kpi": {
+      "trafficVolume": "Traffic Volume",
+      "trafficVolumeUnit": "vehicles/day",
+      "trafficVolumeDelta": "+12.4%",
+      "activeIncidents": "Active Incidents",
+      "activeIncidentsUnit": "ongoing events",
+      "activeIncidentsDelta": "+3 from avg",
+      "systemAccuracy": "System Accuracy",
+      "systemAccuracyUnit": "detection rate",
+      "systemAccuracyDelta": "+0.3% this week",
+      "avgLatency": "Avg Latency",
+      "avgLatencyUnit": "inference time",
+      "avgLatencyDelta": "-4ms improved"
+    },
+    "chart": {
+      "title": "Hourly Traffic Flow",
+      "subtitle": "24-hour vehicle count — Bangkok Grid Network"
+    },
+    "incidents": {
+      "title": "Recent Incident Summary",
+      "subtitle": "Last 6 events — auto-refreshing",
+      "viewAll": "VIEW ALL →",
+      "headers": {
+        "id": "Incident ID",
+        "time": "Time",
+        "location": "Location",
+        "type": "Type",
+        "severity": "Severity",
+        "camera": "Camera"
+      }
+    }
+  },
+  "incidentTypes": {
+    "multiVehicleCollision": "Multi-Vehicle Collision",
+    "pedestrianConflict": "Pedestrian Conflict",
+    "redLightViolation": "Red Light Violation",
+    "congestionAlert": "Congestion Alert",
+    "wrongWayDriver": "Wrong-Way Driver",
+    "laneObstruction": "Lane Obstruction",
+    "speedViolation": "Speed Violation",
+    "congestionThreshold": "Congestion Threshold",
+    "vehicleBreakdown": "Vehicle Breakdown",
+    "roadDebris": "Road Debris",
+    "collisionDetected": "Collision Detected"
+  },
+  "locations": {
+    "latPhraoKaset": "Lat Phrao Rd / Kaset-Nawamin",
+    "sukhumvitSoi71": "Sukhumvit Soi 71",
+    "ratchadaphisek": "Ratchadaphisek Rd",
+    "chatuchak": "Chatuchak Intersection",
+    "huaiKhwang": "HuaiKhwang District",
+    "phetchaburi": "Phetchaburi Rd",
+    "vibhavadi": "Vibhavadi Rd",
+    "dinDaeng": "Din Daeng Flyover",
+    "ariBts": "Ari BTS Station",
+    "phahonYothin": "Phahon Yothin Rd",
+    "ngamwongwan": "Ngamwongwan Rd",
+    "outerRing": "Outer Ring Rd",
+    "latPhraoShort": "Lat Phrao / Kaset",
+    "chatuchakShort": "Chatuchak Int.",
+    "huaiKhwangShort": "HuaiKhwang Dist.",
+    "ariBtsArea": "Ari BTS Station Area",
+    "outerRingEast": "Outer Ring Rd East",
+    "vibhavadiRangsit": "Vibhavadi Rangsit Rd",
+    "allLocations": "All Locations",
+    "huaiKhwangFilter": "HuaiKhwang",
+    "latPhraoFilter": "Lat Phrao",
+    "sukhumvitFilter": "Sukhumvit",
+    "ratchadaphisekFilter": "Ratchadaphisek",
+    "chatuchakFilter": "Chatuchak",
+    "latPhraoJunction": "Lat Phrao Junction",
+    "dinDaengHotspot": "Din Daeng"
+  },
+  "severity": {
+    "high": "HIGH",
+    "medium": "MED",
+    "low": "LOW"
+  },
+  "liveFeed": {
+    "badge": "LIVE MONITORING",
+    "title": "Camera Feed — HuaiKhwang District",
+    "rec": "REC",
+    "camId": "CAM-ID: HuaiKhwang_01",
+    "aiActive": "AI ACTIVE",
+    "bboxOn": "BBOX ON",
+    "vehiclesDetected": "Vehicles Detected",
+    "pedestrians": "Pedestrians",
+    "confidence": "Confidence",
+    "incidentDetected": "⚠ INCIDENT DETECTED",
+    "incidentLog": "Incident Log",
+    "realtimeEvents": "Real-time events",
+    "liveStatus": "LIVE ●",
+    "showingIncidents": "Showing 12 of 847 total incidents today",
+    "bbox": {
+      "veh": "VEH",
+      "incident": "INCIDENT",
+      "ped": "PED"
+    }
+  },
+  "reports": {
+    "badge": "ANALYTICS & REPORTS",
+    "title": "Incident Analytics",
+    "from": "FROM",
+    "to": "TO",
+    "location": "LOCATION",
+    "generateReport": "GENERATE REPORT",
+    "exportCsv": "EXPORT CSV",
+    "causesTitle": "Accident Causes",
+    "causesSubtitle": "Distribution by primary cause — 847 events",
+    "percentOfIncidents": "% of incidents",
+    "hotspotTitle": "Hotspot Areas",
+    "hotspotSubtitle": "Bangkok Metropolitan Region — Incident density",
+    "incidentDensity": "INCIDENT DENSITY",
+    "high": "HIGH",
+    "tableTitle": "Incident Detail Table",
+    "recordsSorted": "{{count}} records — sorted by {{sort}}",
+    "headers": {
+      "date": "Date",
+      "location": "Location",
+      "type": "Accident Type",
+      "risk": "Risk Score"
+    }
+  },
+  "causes": {
+    "speeding": "Speeding",
+    "redLightViolation": "Red Light Violation",
+    "distractedDriving": "Distracted Driving",
+    "laneChange": "Lane Change",
+    "roadCondition": "Road Condition",
+    "other": "Other"
+  },
+  "settings": {
+    "badge": "CONFIGURATION",
+    "title": "System Settings",
+    "subtitle": "Manage camera, detection, security, and system preferences",
+    "camera": {
+      "title": "Camera Configuration",
+      "subtitle": "Video stream & encoding parameters",
+      "resolution": "Resolution",
+      "frameRate": "Frame Rate",
+      "bitrate": "Bitrate",
+      "streamPreset": "STREAM QUALITY PRESET",
+      "economy": "Economy",
+      "balanced": "Balanced",
+      "highFidelity": "High Fidelity"
+    },
+    "ai": {
+      "title": "AI Detection Modules",
+      "subtitle": "Enable or disable detection algorithms",
+      "autoReport": "Auto-Report Generation",
+      "autoReportDesc": "Automatically generate incident reports on detection",
+      "redLight": "Red Light Detection",
+      "redLightDesc": "Flag vehicles crossing on red signal",
+      "speed": "Speed Violation Detection",
+      "speedDesc": "Identify vehicles exceeding speed limits",
+      "crowd": "Crowd Density Analysis",
+      "crowdDesc": "Monitor pedestrian density in monitored zones",
+      "activeModules": "ACTIVE MODULES",
+      "moduleAutoReport": "Auto-Report",
+      "moduleRedLight": "Red Light",
+      "moduleSpeed": "Speed",
+      "moduleCrowd": "Crowd"
+    },
+    "system": {
+      "title": "System Information",
+      "subtitle": "Hardware and software status",
+      "platformVersion": "Platform Version",
+      "platformValue": "GridEye AI v2.4.1",
+      "nodeCount": "Node Count",
+      "nodeValue": "47 active cameras",
+      "modelEngine": "Model Engine",
+      "modelValue": "YOLOv8-X Turbo",
+      "gpuCluster": "GPU Cluster",
+      "gpuValue": "NVIDIA A100 × 4",
+      "inferenceBackend": "Inference Backend",
+      "inferenceValue": "TensorRT 8.6",
+      "uptime": "Uptime",
+      "uptimeValue": "14d 7h 22m",
+      "lastModelUpdate": "Last Model Update",
+      "lastModelValue": "2024-07-08 02:14 UTC",
+      "dataRegion": "Data Region",
+      "dataRegionValue": "Bangkok — ap-southeast-1",
+      "checkUpdates": "CHECK UPDATES",
+      "restartNode": "RESTART NODE"
+    },
+    "security": {
+      "title": "Security & Privacy",
+      "subtitle": "Data protection and access control",
+      "autoBlur": "Auto-Blur License Plates",
+      "autoBlurDesc": "Anonymize plate numbers in exported footage",
+      "encryptLogs": "Encrypt Activity Logs",
+      "encryptLogsDesc": "AES-256 encryption on all stored logs",
+      "twoFactor": "Two-Factor Authentication",
+      "twoFactorDesc": "Require 2FA for admin panel access",
+      "compliancePassed": "COMPLIANCE STATUS: PASSED",
+      "complianceWarning": "COMPLIANCE WARNING",
+      "compliancePassedDesc": "PDPA Thailand & GDPR Article 25 — Privacy by Design requirements met.",
+      "complianceWarningDesc": "Enable plate blur and log encryption to meet PDPA compliance standards.",
+      "accessControl": "ACCESS CONTROL",
+      "lastLogin": "Last login: {{time}}",
+      "roles": {
+        "superAdmin": "Super Admin",
+        "operator": "Operator",
+        "readOnly": "Read-only"
+      },
+      "loginTimes": {
+        "today": "18:42 today",
+        "yesterday": "Yesterday",
+        "daysAgo": "3 days ago"
+      }
+    }
+  }
+}

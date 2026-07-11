@@ -1,0 +1,231 @@
+{
+  "nav": {
+    "dashboard": "แดชบอร์ด",
+    "liveFeed": "ภาพสด",
+    "reports": "รายงาน",
+    "settings": "ตั้งค่า",
+    "navigation": "เมนูนำทาง",
+    "live": "สด",
+    "systemOnline": "ระบบ: ออนไลน์",
+    "version": "v2.4.1 — กริดกรุงเทพฯ",
+    "camerasActive": "กล้องทำงาน 47 ตัว"
+  },
+  "dashboard": {
+    "badge": "ภาพรวมแดชบอร์ด",
+    "title": "ศูนย์วิเคราะห์จราจร",
+    "subtitle": "กรุงเทพมหานคร — ติดตามแบบเรียลไทม์",
+    "lastUpdated": "อัปเดตล่าสุด: 18:47:03",
+    "vehicles": "คัน",
+    "kpi": {
+      "trafficVolume": "ปริมาณจราจร",
+      "trafficVolumeUnit": "คัน/วัน",
+      "trafficVolumeDelta": "+12.4%",
+      "activeIncidents": "เหตุการณ์ที่เกิดขึ้น",
+      "activeIncidentsUnit": "เหตุการณ์ที่ดำเนินอยู่",
+      "activeIncidentsDelta": "+3 จากค่าเฉลี่ย",
+      "systemAccuracy": "ความแม่นยำระบบ",
+      "systemAccuracyUnit": "อัตราการตรวจจับ",
+      "systemAccuracyDelta": "+0.3% สัปดาห์นี้",
+      "avgLatency": "เวลาตอบสนองเฉลี่ย",
+      "avgLatencyUnit": "เวลาประมวลผล",
+      "avgLatencyDelta": "ดีขึ้น -4ms"
+    },
+    "chart": {
+      "title": "ปริมาณจราจรรายชั่วโมง",
+      "subtitle": "จำนวนรถ 24 ชั่วโมง — เครือข่ายกริดกรุงเทพฯ"
+    },
+    "incidents": {
+      "title": "สรุปเหตุการณ์ล่าสุด",
+      "subtitle": "6 เหตุการณ์ล่าสุด — รีเฟรชอัตโนมัติ",
+      "viewAll": "ดูทั้งหมด →",
+      "headers": {
+        "id": "รหัสเหตุการณ์",
+        "time": "เวลา",
+        "location": "สถานที่",
+        "type": "ประเภท",
+        "severity": "ระดับ",
+        "camera": "กล้อง"
+      }
+    }
+  },
+  "incidentTypes": {
+    "multiVehicleCollision": "รถชนกันหลายคัน",
+    "pedestrianConflict": "ความเสี่ยงต่อคนเดินเท้า",
+    "redLightViolation": "ฝ่าไฟแดง",
+    "congestionAlert": "แจ้งเตือนรถติด",
+    "wrongWayDriver": "ขับรถย้อนทาง",
+    "laneObstruction": "มีสิ่งกีดขวางเลน",
+    "speedViolation": "ขับรถเร็วเกินกำหนด",
+    "congestionThreshold": "เกินเกณฑ์ความหนาแน่น",
+    "vehicleBreakdown": "รถเสีย",
+    "roadDebris": "เศษวัสดุบนถนน",
+    "collisionDetected": "ตรวจพบการชน"
+  },
+  "locations": {
+    "latPhraoKaset": "ถ.ลาดพร้าว / เกษตร-นวมินทร์",
+    "sukhumvitSoi71": "สุขุมวิท ซ.71",
+    "ratchadaphisek": "ถ.รัชดาภิเษก",
+    "chatuchak": "แยกจตุจักร",
+    "huaiKhwang": "เขตห้วยขวาง",
+    "phetchaburi": "ถ.เพชรบุรี",
+    "vibhavadi": "ถ.วิภาวดี",
+    "dinDaeng": "สะพานดินแดง",
+    "ariBts": "สถานี BTS อารีย์",
+    "phahonYothin": "ถ.พหลโยธิน",
+    "ngamwongwan": "ถ.งามวงศ์วาน",
+    "outerRing": "ถนนวงแหวนรอบนอก",
+    "latPhraoShort": "ลาดพร้าว / เกษตร",
+    "chatuchakShort": "แยกจตุจักร",
+    "huaiKhwangShort": "เขตห้วยขวาง",
+    "ariBtsArea": "บริเวณสถานี BTS อารีย์",
+    "outerRingEast": "วงแหวนรอบนอก ฝั่งตะวันออก",
+    "vibhavadiRangsit": "ถ.วิภาวดีรังสิต",
+    "allLocations": "ทุกพื้นที่",
+    "huaiKhwangFilter": "ห้วยขวาง",
+    "latPhraoFilter": "ลาดพร้าว",
+    "sukhumvitFilter": "สุขุมวิท",
+    "ratchadaphisekFilter": "รัชดาภิเษก",
+    "chatuchakFilter": "จตุจักร",
+    "latPhraoJunction": "แยกลาดพร้าว",
+    "dinDaengHotspot": "ดินแดง"
+  },
+  "severity": {
+    "high": "สูง",
+    "medium": "กลาง",
+    "low": "ต่ำ"
+  },
+  "liveFeed": {
+    "badge": "ติดตามแบบสด",
+    "title": "ภาพจากกล้อง — เขตห้วยขวาง",
+    "rec": "REC",
+    "camId": "CAM-ID: HuaiKhwang_01",
+    "aiActive": "AI ทำงาน",
+    "bboxOn": "กรอบเปิด",
+    "vehiclesDetected": "รถที่ตรวจพบ",
+    "pedestrians": "คนเดินเท้า",
+    "confidence": "ความมั่นใจ",
+    "incidentDetected": "⚠ ตรวจพบเหตุการณ์",
+    "incidentLog": "บันทึกเหตุการณ์",
+    "realtimeEvents": "เหตุการณ์แบบเรียลไทม์",
+    "liveStatus": "สด ●",
+    "showingIncidents": "แสดง 12 จาก 847 เหตุการณ์วันนี้",
+    "bbox": {
+      "veh": "รถ",
+      "incident": "เหตุการณ์",
+      "ped": "คนเดิน"
+    }
+  },
+  "reports": {
+    "badge": "วิเคราะห์และรายงาน",
+    "title": "วิเคราะห์เหตุการณ์",
+    "from": "ตั้งแต่",
+    "to": "ถึง",
+    "location": "พื้นที่",
+    "generateReport": "สร้างรายงาน",
+    "exportCsv": "ส่งออก CSV",
+    "causesTitle": "สาเหตุอุบัติเหตุ",
+    "causesSubtitle": "สัดส่วนตามสาเหตุหลัก — 847 เหตุการณ์",
+    "percentOfIncidents": "% ของเหตุการณ์",
+    "hotspotTitle": "พื้นที่เสี่ยง",
+    "hotspotSubtitle": "กรุงเทพมหานคร — ความหนาแน่นเหตุการณ์",
+    "incidentDensity": "ความหนาแน่นเหตุการณ์",
+    "high": "สูง",
+    "tableTitle": "ตารางรายละเอียดเหตุการณ์",
+    "recordsSorted": "{{count}} รายการ — เรียงตาม {{sort}}",
+    "headers": {
+      "date": "วันที่",
+      "location": "สถานที่",
+      "type": "ประเภทอุบัติเหตุ",
+      "risk": "คะแนนความเสี่ยง"
+    }
+  },
+  "causes": {
+    "speeding": "ขับเร็วเกินกำหนด",
+    "redLightViolation": "ฝ่าไฟแดง",
+    "distractedDriving": "ขับรถไม่ตั้งใจ",
+    "laneChange": "เปลี่ยนเลน",
+    "roadCondition": "สภาพถนน",
+    "other": "อื่นๆ"
+  },
+  "settings": {
+    "badge": "การตั้งค่า",
+    "title": "ตั้งค่าระบบ",
+    "subtitle": "จัดการกล้อง การตรวจจับ ความปลอดภัย และการตั้งค่าระบบ",
+    "camera": {
+      "title": "ตั้งค่ากล้อง",
+      "subtitle": "พารามิเตอร์สตรีมวิดีโอและการเข้ารหัส",
+      "resolution": "ความละเอียด",
+      "frameRate": "เฟรมเรต",
+      "bitrate": "บิตเรต",
+      "streamPreset": "คุณภาพสตรีม",
+      "economy": "ประหยัด",
+      "balanced": "สมดุล",
+      "highFidelity": "คุณภาพสูง"
+    },
+    "ai": {
+      "title": "โมดูลตรวจจับ AI",
+      "subtitle": "เปิดหรือปิดอัลกอริทึมการตรวจจับ",
+      "autoReport": "สร้างรายงานอัตโนมัติ",
+      "autoReportDesc": "สร้างรายงานเหตุการณ์อัตโนมัติเมื่อตรวจพบ",
+      "redLight": "ตรวจจับฝ่าไฟแดง",
+      "redLightDesc": "แจ้งเตือนรถที่ขับฝ่าไฟแดง",
+      "speed": "ตรวจจับความเร็วเกิน",
+      "speedDesc": "ระบุรถที่ขับเร็วเกินกำหนด",
+      "crowd": "วิเคราะห์ความหนาแน่นผู้คน",
+      "crowdDesc": "ติดตามความหนาแน่นคนเดินเท้าในพื้นที่",
+      "activeModules": "โมดูลที่เปิดใช้งาน",
+      "moduleAutoReport": "รายงานอัตโนมัติ",
+      "moduleRedLight": "ไฟแดง",
+      "moduleSpeed": "ความเร็ว",
+      "moduleCrowd": "ผู้คน"
+    },
+    "system": {
+      "title": "ข้อมูลระบบ",
+      "subtitle": "สถานะฮาร์ดแวร์และซอฟต์แวร์",
+      "platformVersion": "เวอร์ชันแพลตฟอร์ม",
+      "platformValue": "GridEye AI v2.4.1",
+      "nodeCount": "จำนวนโหนด",
+      "nodeValue": "กล้องทำงาน 47 ตัว",
+      "modelEngine": "โมเดล AI",
+      "modelValue": "YOLOv8-X Turbo",
+      "gpuCluster": "คลัสเตอร์ GPU",
+      "gpuValue": "NVIDIA A100 × 4",
+      "inferenceBackend": "ระบบประมวลผล",
+      "inferenceValue": "TensorRT 8.6",
+      "uptime": "เวลาทำงาน",
+      "uptimeValue": "14 วัน 7 ชม. 22 นาที",
+      "lastModelUpdate": "อัปเดตโมเดลล่าสุด",
+      "lastModelValue": "2024-07-08 02:14 UTC",
+      "dataRegion": "ภูมิภาคข้อมูล",
+      "dataRegionValue": "กรุงเทพฯ — ap-southeast-1",
+      "checkUpdates": "ตรวจสอบอัปเดต",
+      "restartNode": "รีสตาร์ทโหนด"
+    },
+    "security": {
+      "title": "ความปลอดภัยและความเป็นส่วนตัว",
+      "subtitle": "การปกป้องข้อมูลและการควบคุมการเข้าถึง",
+      "autoBlur": "เบลอป้ายทะเบียนอัตโนมัติ",
+      "autoBlurDesc": "ทำให้ป้ายทะเบียนไม่ระบุตัวตนในวิดีโอที่ส่งออก",
+      "encryptLogs": "เข้ารหัสบันทึกกิจกรรม",
+      "encryptLogsDesc": "เข้ารหัส AES-256 สำหรับบันทึกทั้งหมด",
+      "twoFactor": "ยืนยันตัวตนสองขั้นตอน",
+      "twoFactorDesc": "ต้องใช้ 2FA สำหรับเข้าถึงแผงผู้ดูแล",
+      "compliancePassed": "สถานะการปฏิบัติตาม: ผ่าน",
+      "complianceWarning": "คำเตือนการปฏิบัติตาม",
+      "compliancePassedDesc": "PDPA ไทย และ GDPR มาตรา 25 — ตรงตามข้อกำหนด Privacy by Design",
+      "complianceWarningDesc": "เปิดเบลอป้ายทะเบียนและเข้ารหัสบันทึกเพื่อให้ตรงตามมาตรฐาน PDPA",
+      "accessControl": "การควบคุมการเข้าถึง",
+      "lastLogin": "เข้าสู่ระบบล่าสุด: {{time}}",
+      "roles": {
+        "superAdmin": "ผู้ดูแลระบบ",
+        "operator": "ผู้ปฏิบัติการ",
+        "readOnly": "อ่านอย่างเดียว"
+      },
+      "loginTimes": {
+        "today": "18:42 วันนี้",
+        "yesterday": "เมื่อวาน",
+        "daysAgo": "3 วันที่แล้ว"
+      }
+    }
+  }
+}
