@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import PanelHeader from './PanelHeader'
 import { useApp } from '../context/AppContext'
@@ -65,6 +65,16 @@ export default function LiveFeed() {
   const [fps, setFps] = useState(30)
   const [tick, setTick] = useState(0)
   const [highlightedId, setHighlightedId] = useState<string | null>(null)
+  const videoRef = useRef<HTMLDivElement>(null)
+
+  const toggleFullscreen = () => {
+    if (!videoRef.current) return
+    if (document.fullscreenElement) {
+      document.exitFullscreen()
+    } else {
+      videoRef.current.requestFullscreen()
+    }
+  }
 
   const camera = CAMERAS[cameraIndex]
   const logEntries = [...ALL_INCIDENTS]
@@ -117,6 +127,13 @@ export default function LiveFeed() {
                 <option key={cam.id} value={i} style={{ background: '#0f172a' }}>{cam.id} — {t(cam.locationKey)}</option>
               ))}
             </select>
+            <button type="button" onClick={toggleFullscreen} style={{
+              background: '#0a1628', borderWidth: 1, borderStyle: 'solid', borderColor: '#1e293b',
+              borderRadius: 6, color: '#94a3b8', fontSize: 12, padding: '6px 12px',
+              fontFamily: 'JetBrains Mono, monospace', cursor: 'pointer',
+            }} title={t('liveFeed.fullscreen')}>
+              ⛶ {t('liveFeed.fullscreen')}
+            </button>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#0a1628', borderWidth: 1, borderStyle: 'solid', borderColor: '#1e293b', borderRadius: 6, padding: '6px 12px' }}>
               <div style={{ width: 7, height: 7, borderRadius: '50%', background: '#ef4444', boxShadow: '0 0 8px #ef4444' }} />
               <span style={{ fontSize: 12, color: '#ef4444', fontFamily: 'JetBrains Mono, monospace', fontWeight: 600 }}>{t('liveFeed.rec')}</span>
@@ -129,7 +146,7 @@ export default function LiveFeed() {
       </div>
 
       <div className="live-feed-grid">
-        <div className="live-feed-video" style={{ position: 'relative', background: '#050e1a', borderWidth: 1, borderStyle: 'solid', borderColor: '#1e293b', borderRadius: 12, overflow: 'hidden' }}>
+        <div className="live-feed-video" ref={videoRef} style={{ position: 'relative', background: '#050e1a', borderWidth: 1, borderStyle: 'solid', borderColor: '#1e293b', borderRadius: 12, overflow: 'hidden' }}>
           <div style={{
             position: 'absolute', inset: 0, opacity: 0.07,
             backgroundImage: 'linear-gradient(#00a3ff 1px, transparent 1px), linear-gradient(90deg, #00a3ff 1px, transparent 1px)',

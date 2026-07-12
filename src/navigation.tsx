@@ -1,4 +1,18 @@
-import type { Screen } from './App'
+export type Screen = 'dashboard' | 'livefeed' | 'reports' | 'settings'
+
+export const SCREEN_PATHS: Record<Screen, string> = {
+  dashboard: '/',
+  livefeed: '/live',
+  reports: '/reports',
+  settings: '/settings',
+}
+
+export function pathToScreen(path: string): Screen {
+  if (path.startsWith('/live')) return 'livefeed'
+  if (path.startsWith('/reports')) return 'reports'
+  if (path.startsWith('/settings')) return 'settings'
+  return 'dashboard'
+}
 
 export const ICON_INACTIVE = '#64748b'
 export const ICON_ACTIVE = '#00a3ff'

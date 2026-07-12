@@ -10,6 +10,32 @@
     "version": "v2.4.1 — Bangkok Grid",
     "camerasActive": "47 cameras active"
   },
+  "search": {
+    "placeholder": "Search incidents, locations, cameras...",
+    "noResults": "No incidents found"
+  },
+  "notifications": {
+    "title": "ALERTS",
+    "empty": "No active alerts"
+  },
+  "help": {
+    "title": "Keyboard Shortcuts",
+    "closeModal": "Close modal"
+  },
+  "alert": {
+    "activeIncidents": "{{count}} active incident(s) require attention",
+    "viewDetails": "View Details",
+    "viewLive": "View Live Feed"
+  },
+  "footer": {
+    "copyright": "© {{year}} GridEye AI Platform",
+    "region": "Bangkok Metropolitan Region"
+  },
+  "notFound": {
+    "title": "Page Not Found",
+    "description": "The page you are looking for does not exist in the GridEye system.",
+    "backHome": "Back to Dashboard"
+  },
   "dashboard": {
     "badge": "OVERVIEW DASHBOARD",
     "title": "Traffic Intelligence Center",
@@ -110,6 +136,7 @@
     "realtimeEvents": "Real-time events",
     "liveStatus": "LIVE ●",
     "showingIncidents": "Showing 12 of 847 total incidents today",
+    "fullscreen": "Fullscreen",
     "bbox": {
       "veh": "VEH",
       "incident": "INCIDENT",
@@ -125,6 +152,7 @@
     "generateReport": "GENERATE REPORT",
     "generating": "GENERATING...",
     "exportCsv": "EXPORT CSV",
+    "print": "PRINT REPORT",
     "noData": "Click GENERATE REPORT to load data",
     "tableEmpty": "Generate a report to view incident records",
     "causesSubtitleFiltered": "Distribution by primary cause — {{count}} events",

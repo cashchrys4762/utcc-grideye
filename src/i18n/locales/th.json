@@ -10,6 +10,32 @@
     "version": "v2.4.1 — กริดกรุงเทพฯ",
     "camerasActive": "กล้องทำงาน 47 ตัว"
   },
+  "search": {
+    "placeholder": "ค้นหาเหตุการณ์, สถานที่, กล้อง...",
+    "noResults": "ไม่พบเหตุการณ์"
+  },
+  "notifications": {
+    "title": "การแจ้งเตือน",
+    "empty": "ไม่มีการแจ้งเตือนที่ดำเนินอยู่"
+  },
+  "help": {
+    "title": "คีย์ลัด",
+    "closeModal": "ปิดหน้าต่าง"
+  },
+  "alert": {
+    "activeIncidents": "มี {{count}} เหตุการณ์ที่ต้องให้ความสนใจ",
+    "viewDetails": "ดูรายละเอียด",
+    "viewLive": "ดูภาพสด"
+  },
+  "footer": {
+    "copyright": "© {{year}} GridEye AI Platform",
+    "region": "กรุงเทพมหานครและปริมณฑล"
+  },
+  "notFound": {
+    "title": "ไม่พบหน้านี้",
+    "description": "หน้าที่คุณค้นหาไม่มีอยู่ในระบบ GridEye",
+    "backHome": "กลับแดชบอร์ด"
+  },
   "dashboard": {
     "badge": "ภาพรวมแดชบอร์ด",
     "title": "ศูนย์วิเคราะห์จราจร",
@@ -110,6 +136,7 @@
     "realtimeEvents": "เหตุการณ์แบบเรียลไทม์",
     "liveStatus": "สด ●",
     "showingIncidents": "แสดง 12 จาก 847 เหตุการณ์วันนี้",
+    "fullscreen": "เต็มจอ",
     "bbox": {
       "veh": "รถ",
       "incident": "เหตุการณ์",
@@ -125,6 +152,7 @@
     "generateReport": "สร้างรายงาน",
     "generating": "กำลังสร้าง...",
     "exportCsv": "ส่งออก CSV",
+    "print": "พิมพ์รายงาน",
     "noData": "กด สร้างรายงาน เพื่อโหลดข้อมูล",
     "tableEmpty": "สร้างรายงานเพื่อดูรายการเหตุการณ์",
     "causesSubtitleFiltered": "สัดส่วนตามสาเหตุหลัก — {{count}} เหตุการณ์",

@@ -1,7 +1,10 @@
-import { createContext, useContext, useState, useCallback, type ReactNode } from 'react'
-import type { Screen } from '../App'
+import { createContext, useContext, useState, useCallback, useMemo, type ReactNode } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
+import { pathToScreen, SCREEN_PATHS, type Screen } from '../navigation'
 import type { AppSettings, Incident } from '../data/types'
 import { loadSettings, saveSettings } from '../utils/storage'
+
+export type { Screen }
 
 export interface Toast {
   id: number
@@ -28,12 +31,17 @@ interface AppContextValue {
 const AppContext = createContext<AppContextValue | null>(null)
 
 export function AppProvider({ children }: { children: ReactNode }) {
-  const [activeScreen, setActiveScreen] = useState<Screen>('dashboard')
+  const routerNavigate = useNavigate()
+  const location = useLocation()
+  const activeScreen = useMemo(() => pathToScreen(location.pathname), [location.pathname])
+
   const [selectedIncident, setSelectedIncident] = useState<Incident | null>(null)
   const [toasts, setToasts] = useState<Toast[]>([])
   const [settings, setSettings] = useState<AppSettings>(loadSettings)
 
-  const navigate = useCallback((screen: Screen) => setActiveScreen(screen), [])
+  const navigate = useCallback((screen: Screen) => {
+    routerNavigate(SCREEN_PATHS[screen])
+  }, [routerNavigate])
 
   const openIncident = useCallback((incident: Incident) => setSelectedIncident(incident), [])
   const closeIncident = useCallback(() => setSelectedIncident(null), [])

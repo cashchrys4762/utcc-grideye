@@ -150,6 +150,11 @@ export default function Reports() {
           borderWidth: 1, borderStyle: 'solid', borderColor: 'rgba(0,163,255,0.25)',
           borderRadius: 8, color: '#00a3ff', fontSize: 13, cursor: 'pointer', fontFamily: 'JetBrains Mono, monospace', width: '100%',
         }}>{t('reports.exportCsv')}</button>
+        <button onClick={() => window.print()} style={{
+          padding: '8px 18px', background: 'transparent',
+          borderWidth: 1, borderStyle: 'solid', borderColor: '#1e293b',
+          borderRadius: 8, color: '#64748b', fontSize: 13, cursor: 'pointer', fontFamily: 'JetBrains Mono, monospace', width: '100%',
+        }}>{t('reports.print')}</button>
         </div>
       </div>
 
