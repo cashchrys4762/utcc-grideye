@@ -1,6 +1,9 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import PanelHeader from './PanelHeader'
+import { useApp } from '../context/AppContext'
+import { QUALITY_PRESETS } from '../utils/storage'
+import type { AppSettings } from '../data/types'
 
 function Toggle({ enabled, onChange, color = '#00a3ff' }: { enabled: boolean; onChange: (v: boolean) => void; color?: string }) {
   return (
@@ -71,20 +74,16 @@ function SettingRow({ label, desc, children }: { label: string; desc?: string; c
   )
 }
 
+const PRESET_KEYS = ['economy', 'balanced', 'highFidelity'] as const
+
 export default function Settings() {
   const { t } = useTranslation()
-  const [resolution, setResolution] = useState(1080)
-  const [fps, setFps] = useState(30)
-  const [bitrate, setBitrate] = useState(8)
-  const [autoReport, setAutoReport] = useState(true)
-  const [redLight, setRedLight] = useState(true)
-  const [speedDetection, setSpeedDetection] = useState(false)
-  const [crowdDetection, setCrowdDetection] = useState(true)
-  const [autoBlur, setAutoBlur] = useState(true)
-  const [encryptLogs, setEncryptLogs] = useState(true)
-  const [twoFactor, setTwoFactor] = useState(false)
+  const { settings, updateCameraSettings, updateAiSettings, updateSecuritySettings, showToast } = useApp()
+  const [checking, setChecking] = useState(false)
+  const [restarting, setRestarting] = useState(false)
 
-  const compliant = autoBlur && encryptLogs
+  const { camera, ai, security } = settings
+  const compliant = security.autoBlur && security.encryptLogs
 
   const qualityPresets = [
     t('settings.camera.economy'),
@@ -104,10 +103,10 @@ export default function Settings() {
   ]
 
   const activeModules = [
-    { label: t('settings.ai.moduleAutoReport'), active: autoReport, color: '#00a3ff' },
-    { label: t('settings.ai.moduleRedLight'), active: redLight, color: '#ef4444' },
-    { label: t('settings.ai.moduleSpeed'), active: speedDetection, color: '#f59e0b' },
-    { label: t('settings.ai.moduleCrowd'), active: crowdDetection, color: '#a855f7' },
+    { label: t('settings.ai.moduleAutoReport'), active: ai.autoReport, color: '#00a3ff' },
+    { label: t('settings.ai.moduleRedLight'), active: ai.redLight, color: '#ef4444' },
+    { label: t('settings.ai.moduleSpeed'), active: ai.speedDetection, color: '#f59e0b' },
+    { label: t('settings.ai.moduleCrowd'), active: ai.crowdDetection, color: '#a855f7' },
   ]
 
   const accessUsers = [
@@ -115,6 +114,26 @@ export default function Settings() {
     { role: 'ops@bangkok.gov', levelKey: 'settings.security.roles.operator', timeKey: 'settings.security.loginTimes.yesterday' },
     { role: 'viewer@trafficcenter', levelKey: 'settings.security.roles.readOnly', timeKey: 'settings.security.loginTimes.daysAgo' },
   ]
+
+  const applyPreset = (preset: AppSettings['camera']['preset']) => {
+    const values = QUALITY_PRESETS[preset]
+    updateCameraSettings({ ...values, preset })
+    showToast(t('toast.presetApplied', { preset: t(`settings.camera.${preset}`) }), 'success')
+  }
+
+  const handleCheckUpdates = async () => {
+    setChecking(true)
+    await new Promise((r) => setTimeout(r, 1200))
+    setChecking(false)
+    showToast(t('toast.updateAvailable'), 'info')
+  }
+
+  const handleRestart = async () => {
+    setRestarting(true)
+    await new Promise((r) => setTimeout(r, 2000))
+    setRestarting(false)
+    showToast(t('toast.nodeRestarted'), 'success')
+  }
 
   return (
     <div className="page-content">
@@ -126,37 +145,41 @@ export default function Settings() {
 
       <div className="settings-grid">
         <Card title={t('settings.camera.title')} subtitle={t('settings.camera.subtitle')}>
-          <Slider label={t('settings.camera.resolution')} value={resolution} onChange={setResolution} min={480} max={2160} unit="p" />
-          <Slider label={t('settings.camera.frameRate')} value={fps} onChange={setFps} min={15} max={60} unit="fps" />
-          <Slider label={t('settings.camera.bitrate')} value={bitrate} onChange={setBitrate} min={2} max={20} unit="Mbps" />
+          <Slider label={t('settings.camera.resolution')} value={camera.resolution} onChange={(v) => updateCameraSettings({ resolution: v })} min={480} max={2160} unit="p" />
+          <Slider label={t('settings.camera.frameRate')} value={camera.fps} onChange={(v) => updateCameraSettings({ fps: v })} min={15} max={60} unit="fps" />
+          <Slider label={t('settings.camera.bitrate')} value={camera.bitrate} onChange={(v) => updateCameraSettings({ bitrate: v })} min={2} max={20} unit="Mbps" />
           <div style={{ marginTop: 4 }}>
             <div style={{ fontSize: 12, color: '#475569', fontFamily: 'JetBrains Mono, monospace', marginBottom: 10 }}>{t('settings.camera.streamPreset')}</div>
             <div className="quality-presets" style={{ display: 'flex', gap: 8 }}>
-              {qualityPresets.map((q, i) => (
-                <button key={q} style={{
-                  flex: 1, padding: '7px 0', borderRadius: 6,
-                  borderWidth: 1, borderStyle: 'solid', borderColor: i === 1 ? '#00a3ff' : '#1e293b',
-                  background: i === 1 ? 'rgba(0,163,255,0.1)' : 'transparent',
-                  color: i === 1 ? '#00a3ff' : '#64748b',
-                  fontSize: 12, cursor: 'pointer', fontFamily: 'JetBrains Mono, monospace',
-                }}>{q}</button>
-              ))}
+              {qualityPresets.map((q, i) => {
+                const preset = PRESET_KEYS[i]
+                const isActive = camera.preset === preset
+                return (
+                  <button key={q} onClick={() => applyPreset(preset)} style={{
+                    flex: 1, padding: '7px 0', borderRadius: 6,
+                    borderWidth: 1, borderStyle: 'solid', borderColor: isActive ? '#00a3ff' : '#1e293b',
+                    background: isActive ? 'rgba(0,163,255,0.1)' : 'transparent',
+                    color: isActive ? '#00a3ff' : '#64748b',
+                    fontSize: 12, cursor: 'pointer', fontFamily: 'JetBrains Mono, monospace',
+                  }}>{q}</button>
+                )
+              })}
             </div>
           </div>
         </Card>
 
         <Card title={t('settings.ai.title')} subtitle={t('settings.ai.subtitle')}>
           <SettingRow label={t('settings.ai.autoReport')} desc={t('settings.ai.autoReportDesc')}>
-            <Toggle enabled={autoReport} onChange={setAutoReport} />
+            <Toggle enabled={ai.autoReport} onChange={(v) => updateAiSettings({ autoReport: v })} />
           </SettingRow>
           <SettingRow label={t('settings.ai.redLight')} desc={t('settings.ai.redLightDesc')}>
-            <Toggle enabled={redLight} onChange={setRedLight} color="#ef4444" />
+            <Toggle enabled={ai.redLight} onChange={(v) => updateAiSettings({ redLight: v })} color="#ef4444" />
           </SettingRow>
           <SettingRow label={t('settings.ai.speed')} desc={t('settings.ai.speedDesc')}>
-            <Toggle enabled={speedDetection} onChange={setSpeedDetection} color="#f59e0b" />
+            <Toggle enabled={ai.speedDetection} onChange={(v) => updateAiSettings({ speedDetection: v })} color="#f59e0b" />
           </SettingRow>
           <SettingRow label={t('settings.ai.crowd')} desc={t('settings.ai.crowdDesc')}>
-            <Toggle enabled={crowdDetection} onChange={setCrowdDetection} color="#a855f7" />
+            <Toggle enabled={ai.crowdDetection} onChange={(v) => updateAiSettings({ crowdDetection: v })} color="#a855f7" />
           </SettingRow>
           <div style={{ marginTop: 16, padding: '12px 14px', background: '#0f172a', borderRadius: 8, borderWidth: 1, borderStyle: 'solid', borderColor: '#1e293b' }}>
             <div style={{ fontSize: 12, color: '#475569', fontFamily: 'JetBrains Mono, monospace', marginBottom: 8 }}>{t('settings.ai.activeModules')}</div>
@@ -181,20 +204,30 @@ export default function Settings() {
             </div>
           ))}
           <div className="system-actions" style={{ marginTop: 16, display: 'flex', gap: 10 }}>
-            <button style={{ flex: 1, padding: '9px 0', background: 'rgba(0,163,255,0.08)', borderWidth: 1, borderStyle: 'solid', borderColor: 'rgba(0,163,255,0.25)', borderRadius: 8, color: '#00a3ff', fontSize: 13, cursor: 'pointer', fontFamily: 'JetBrains Mono, monospace' }}>{t('settings.system.checkUpdates')}</button>
-            <button style={{ flex: 1, padding: '9px 0', background: 'rgba(239,68,68,0.08)', borderWidth: 1, borderStyle: 'solid', borderColor: 'rgba(239,68,68,0.2)', borderRadius: 8, color: '#ef4444', fontSize: 13, cursor: 'pointer', fontFamily: 'JetBrains Mono, monospace' }}>{t('settings.system.restartNode')}</button>
+            <button onClick={handleCheckUpdates} disabled={checking} style={{
+              flex: 1, padding: '9px 0', background: 'rgba(0,163,255,0.08)',
+              borderWidth: 1, borderStyle: 'solid', borderColor: 'rgba(0,163,255,0.25)',
+              borderRadius: 8, color: '#00a3ff', fontSize: 13, cursor: checking ? 'wait' : 'pointer',
+              fontFamily: 'JetBrains Mono, monospace', opacity: checking ? 0.6 : 1,
+            }}>{checking ? t('settings.system.checking') : t('settings.system.checkUpdates')}</button>
+            <button onClick={handleRestart} disabled={restarting} style={{
+              flex: 1, padding: '9px 0', background: 'rgba(239,68,68,0.08)',
+              borderWidth: 1, borderStyle: 'solid', borderColor: 'rgba(239,68,68,0.2)',
+              borderRadius: 8, color: '#ef4444', fontSize: 13, cursor: restarting ? 'wait' : 'pointer',
+              fontFamily: 'JetBrains Mono, monospace', opacity: restarting ? 0.6 : 1,
+            }}>{restarting ? t('settings.system.restarting') : t('settings.system.restartNode')}</button>
           </div>
         </Card>
 
         <Card title={t('settings.security.title')} subtitle={t('settings.security.subtitle')}>
           <SettingRow label={t('settings.security.autoBlur')} desc={t('settings.security.autoBlurDesc')}>
-            <Toggle enabled={autoBlur} onChange={setAutoBlur} color="#22c55e" />
+            <Toggle enabled={security.autoBlur} onChange={(v) => updateSecuritySettings({ autoBlur: v })} color="#22c55e" />
           </SettingRow>
           <SettingRow label={t('settings.security.encryptLogs')} desc={t('settings.security.encryptLogsDesc')}>
-            <Toggle enabled={encryptLogs} onChange={setEncryptLogs} color="#22c55e" />
+            <Toggle enabled={security.encryptLogs} onChange={(v) => updateSecuritySettings({ encryptLogs: v })} color="#22c55e" />
           </SettingRow>
           <SettingRow label={t('settings.security.twoFactor')} desc={t('settings.security.twoFactorDesc')}>
-            <Toggle enabled={twoFactor} onChange={setTwoFactor} />
+            <Toggle enabled={security.twoFactor} onChange={(v) => updateSecuritySettings({ twoFactor: v })} />
           </SettingRow>
 
           <div style={{ marginTop: 18, padding: '14px 16px', background: compliant ? 'rgba(34,197,94,0.06)' : 'rgba(245,158,11,0.06)', borderRadius: 8, borderWidth: 1, borderStyle: 'solid', borderColor: compliant ? 'rgba(34,197,94,0.2)' : 'rgba(245,158,11,0.2)' }}>

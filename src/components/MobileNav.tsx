@@ -1,12 +1,7 @@
 import { useTranslation } from 'react-i18next'
-import type { Screen } from '../App'
+import { useApp } from '../context/AppContext'
 import LanguageSwitcher from './LanguageSwitcher'
 import { navItems } from '../navigation'
-
-interface Props {
-  active: Screen
-  onNavigate: (s: Screen) => void
-}
 
 export function MobileHeader() {
   return (
@@ -29,8 +24,9 @@ export function MobileHeader() {
   )
 }
 
-export function MobileBottomNav({ active, onNavigate }: Props) {
+export function MobileBottomNav() {
   const { t } = useTranslation()
+  const { activeScreen: active, navigate } = useApp()
 
   return (
     <nav className="mobile-bottom-nav" aria-label="Main navigation">
@@ -41,7 +37,7 @@ export function MobileBottomNav({ active, onNavigate }: Props) {
             key={item.id}
             type="button"
             className={`mobile-nav-item${isActive ? ' mobile-nav-item--active' : ''}`}
-            onClick={() => onNavigate(item.id)}
+            onClick={() => navigate(item.id)}
             aria-current={isActive ? 'page' : undefined}
           >
             <span className="mobile-nav-icon">{item.icon(isActive)}</span>

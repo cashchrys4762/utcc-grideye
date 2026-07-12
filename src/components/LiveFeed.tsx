@@ -1,21 +1,10 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import PanelHeader from './PanelHeader'
-
-const logEntries = [
-  { id: 'INC-0847', time: '18:47:12', typeKey: 'incidentTypes.collisionDetected', locKey: 'locations.latPhraoShort', sev: 'high', conf: 94.2 },
-  { id: 'INC-0846', time: '18:44:38', typeKey: 'incidentTypes.pedestrianConflict', locKey: 'locations.sukhumvitSoi71', sev: 'medium', conf: 87.5 },
-  { id: 'INC-0845', time: '18:42:01', typeKey: 'incidentTypes.redLightViolation', locKey: 'locations.ratchadaphisek', sev: 'low', conf: 99.1 },
-  { id: 'INC-0844', time: '18:39:44', typeKey: 'incidentTypes.congestionThreshold', locKey: 'locations.chatuchakShort', sev: 'medium', conf: 91.7 },
-  { id: 'INC-0843', time: '18:36:22', typeKey: 'incidentTypes.wrongWayDriver', locKey: 'locations.huaiKhwangShort', sev: 'high', conf: 96.3 },
-  { id: 'INC-0842', time: '18:31:09', typeKey: 'incidentTypes.laneObstruction', locKey: 'locations.phetchaburi', sev: 'low', conf: 88.4 },
-  { id: 'INC-0841', time: '18:28:55', typeKey: 'incidentTypes.speedViolation', locKey: 'locations.vibhavadi', sev: 'low', conf: 97.8 },
-  { id: 'INC-0840', time: '18:24:17', typeKey: 'incidentTypes.multiVehicleCollision', locKey: 'locations.dinDaeng', sev: 'high', conf: 93.6 },
-  { id: 'INC-0839', time: '18:20:03', typeKey: 'incidentTypes.pedestrianConflict', locKey: 'locations.ariBts', sev: 'medium', conf: 85.1 },
-  { id: 'INC-0838', time: '18:15:41', typeKey: 'incidentTypes.redLightViolation', locKey: 'locations.phahonYothin', sev: 'low', conf: 98.7 },
-  { id: 'INC-0837', time: '18:11:29', typeKey: 'incidentTypes.vehicleBreakdown', locKey: 'locations.ngamwongwan', sev: 'medium', conf: 89.2 },
-  { id: 'INC-0836', time: '18:07:14', typeKey: 'incidentTypes.roadDebris', locKey: 'locations.outerRing', sev: 'low', conf: 82.4 },
-]
+import { useApp } from '../context/AppContext'
+import { CAMERAS } from '../data/cameras'
+import { getIncidentById } from '../api/mockApi'
+import { ALL_INCIDENTS } from '../data/incidents'
 
 const sevColors = {
   high: { color: '#ef4444', bg: 'rgba(239,68,68,0.1)' },
@@ -25,14 +14,14 @@ const sevColors = {
 
 type Corner = 'tl' | 'tr' | 'bl' | 'br'
 
-function BoundingBox({ x, y, w, h, label, color }: { x: number; y: number; w: number; h: number; label: string; color: string }) {
+function BoundingBox({ x, y, w, h, label, color, highlighted }: { x: number; y: number; w: number; h: number; label: string; color: string; highlighted?: boolean }) {
   const corners: Corner[] = ['tl', 'tr', 'bl', 'br']
   return (
-    <div style={{ position: 'absolute', left: `${x}%`, top: `${y}%`, width: `${w}%`, height: `${h}%` }}>
+    <div style={{ position: 'absolute', left: `${x}%`, top: `${y}%`, width: `${w}%`, height: `${h}%`, transition: 'opacity 0.2s', opacity: highlighted === false ? 0.3 : 1 }}>
       <div style={{
         position: 'absolute', inset: 0,
-        borderWidth: 1, borderStyle: 'solid', borderColor: color,
-        boxShadow: `0 0 8px ${color}80`,
+        borderWidth: highlighted ? 2 : 1, borderStyle: 'solid', borderColor: color,
+        boxShadow: `0 0 ${highlighted ? 16 : 8}px ${color}80`,
       }}>
         {corners.map((c) => (
           <div key={c} style={{
@@ -71,8 +60,16 @@ function BoundingBox({ x, y, w, h, label, color }: { x: number; y: number; w: nu
 
 export default function LiveFeed() {
   const { t } = useTranslation()
+  const { openIncident } = useApp()
+  const [cameraIndex, setCameraIndex] = useState(0)
   const [fps, setFps] = useState(30)
   const [tick, setTick] = useState(0)
+  const [highlightedId, setHighlightedId] = useState<string | null>(null)
+
+  const camera = CAMERAS[cameraIndex]
+  const logEntries = [...ALL_INCIDENTS]
+    .sort((a, b) => `${b.date} ${b.time}`.localeCompare(`${a.date} ${a.time}`))
+    .slice(0, 12)
 
   useEffect(() => {
     const id = setInterval(() => setTick((n) => n + 1), 1000)
@@ -87,10 +84,16 @@ export default function LiveFeed() {
   const timeStr = now.toTimeString().slice(0, 8)
 
   const hudStats = [
-    { label: t('liveFeed.vehiclesDetected'), val: '4' },
-    { label: t('liveFeed.pedestrians'), val: '1' },
-    { label: t('liveFeed.confidence'), val: '94.2%' },
+    { label: t('liveFeed.vehiclesDetected'), val: String(camera.vehicles) },
+    { label: t('liveFeed.pedestrians'), val: String(camera.pedestrians) },
+    { label: t('liveFeed.confidence'), val: `${camera.confidence}%` },
   ]
+
+  const handleLogClick = (id: string) => {
+    setHighlightedId(id)
+    const incident = getIncidentById(id)
+    if (incident) openIncident(incident)
+  }
 
   return (
     <div className="page-content">
@@ -98,9 +101,22 @@ export default function LiveFeed() {
         <div style={{ fontSize: 11, color: '#00a3ff', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '0.12em', marginBottom: 4 }}>{t('liveFeed.badge')}</div>
         <div className="page-header-row">
           <h1 className="page-title">
-            {t('liveFeed.title')}
+            {t('liveFeed.title')} — {t(camera.locationKey)}
           </h1>
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+            <select
+              value={cameraIndex}
+              onChange={(e) => { setCameraIndex(Number(e.target.value)); setHighlightedId(null) }}
+              style={{
+                background: '#0a1628', borderWidth: 1, borderStyle: 'solid', borderColor: '#1e293b',
+                borderRadius: 6, color: '#00a3ff', fontSize: 12, padding: '6px 12px',
+                fontFamily: 'JetBrains Mono, monospace', cursor: 'pointer',
+              }}
+            >
+              {CAMERAS.map((cam, i) => (
+                <option key={cam.id} value={i} style={{ background: '#0f172a' }}>{cam.id} — {t(cam.locationKey)}</option>
+              ))}
+            </select>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#0a1628', borderWidth: 1, borderStyle: 'solid', borderColor: '#1e293b', borderRadius: 6, padding: '6px 12px' }}>
               <div style={{ width: 7, height: 7, borderRadius: '50%', background: '#ef4444', boxShadow: '0 0 8px #ef4444' }} />
               <span style={{ fontSize: 12, color: '#ef4444', fontFamily: 'JetBrains Mono, monospace', fontWeight: 600 }}>{t('liveFeed.rec')}</span>
@@ -127,10 +143,15 @@ export default function LiveFeed() {
             ))}
           </div>
 
-          <BoundingBox x={12} y={30} w={18} h={28} label={`${t('liveFeed.bbox.veh')} · 97.2%`} color="#00a3ff" />
-          <BoundingBox x={38} y={35} w={14} h={22} label={`${t('liveFeed.bbox.veh')} · 94.8%`} color="#00a3ff" />
-          <BoundingBox x={60} y={28} w={20} h={32} label={`${t('liveFeed.bbox.incident')} · 91.4%`} color="#ef4444" />
-          <BoundingBox x={78} y={42} w={12} h={18} label={`${t('liveFeed.bbox.ped')} · 88.6%`} color="#22c55e" />
+          {camera.detections.map((det, i) => (
+            <BoundingBox
+              key={i}
+              x={det.x} y={det.y} w={det.w} h={det.h}
+              label={`${t(det.labelKey)} · ${det.confidence}%`}
+              color={det.color}
+              highlighted={highlightedId ? det.incidentId === highlightedId : undefined}
+            />
+          ))}
 
           <div className="hud-top" style={{
             position: 'absolute', top: 0, left: 0, right: 0,
@@ -138,7 +159,7 @@ export default function LiveFeed() {
             padding: '14px 18px', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
           }}>
             <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
-              <span style={{ fontSize: 12, color: '#00a3ff', fontFamily: 'JetBrains Mono, monospace', fontWeight: 600 }}>{t('liveFeed.camId')}</span>
+              <span style={{ fontSize: 12, color: '#00a3ff', fontFamily: 'JetBrains Mono, monospace', fontWeight: 600 }}>{camera.id}</span>
               <span className="hud-top-meta" style={{ fontSize: 12, color: '#94a3b8', fontFamily: 'JetBrains Mono, monospace' }}>|</span>
               <span style={{ fontSize: 12, color: '#94a3b8', fontFamily: 'JetBrains Mono, monospace' }}>
                 FPS: <span style={{ color: fps >= 29 ? '#22c55e' : '#f59e0b' }}>{fps}</span>
@@ -165,9 +186,11 @@ export default function LiveFeed() {
                 </div>
               ))}
             </div>
-            <div style={{ background: 'rgba(239,68,68,0.15)', borderWidth: 1, borderStyle: 'solid', borderColor: 'rgba(239,68,68,0.4)', borderRadius: 6, padding: '6px 14px' }}>
-              <span style={{ fontSize: 12, color: '#ef4444', fontFamily: 'JetBrains Mono, monospace', fontWeight: 700 }}>{t('liveFeed.incidentDetected')}</span>
-            </div>
+            {camera.hasIncident && (
+              <div style={{ background: 'rgba(239,68,68,0.15)', borderWidth: 1, borderStyle: 'solid', borderColor: 'rgba(239,68,68,0.4)', borderRadius: 6, padding: '6px 14px' }}>
+                <span style={{ fontSize: 12, color: '#ef4444', fontFamily: 'JetBrains Mono, monospace', fontWeight: 700 }}>{t('liveFeed.incidentDetected')}</span>
+              </div>
+            )}
           </div>
 
           <div style={{
@@ -192,12 +215,19 @@ export default function LiveFeed() {
 
           <div style={{ flex: 1, overflowY: 'auto', padding: '8px 0' }}>
             {logEntries.map((entry, i) => {
-              const sev = sevColors[entry.sev as keyof typeof sevColors]
+              const sev = sevColors[entry.severity]
+              const isHighlighted = highlightedId === entry.id
               return (
                 <div key={entry.id}
-                  style={{ padding: '12px 18px', borderBottomWidth: i < logEntries.length - 1 ? 1 : 0, borderBottomStyle: 'solid', borderBottomColor: 'rgba(30,41,59,0.5)', cursor: 'pointer' }}
-                  onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.background = '#0f172a' }}
-                  onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.background = 'transparent' }}
+                  onClick={() => handleLogClick(entry.id)}
+                  style={{
+                    padding: '12px 18px', borderBottomWidth: i < logEntries.length - 1 ? 1 : 0,
+                    borderBottomStyle: 'solid', borderBottomColor: 'rgba(30,41,59,0.5)', cursor: 'pointer',
+                    background: isHighlighted ? '#0f172a' : 'transparent',
+                    borderLeftWidth: isHighlighted ? 2 : 0, borderLeftStyle: 'solid', borderLeftColor: '#00a3ff',
+                  }}
+                  onMouseEnter={(e) => { if (!isHighlighted) (e.currentTarget as HTMLDivElement).style.background = '#0f172a' }}
+                  onMouseLeave={(e) => { if (!isHighlighted) (e.currentTarget as HTMLDivElement).style.background = 'transparent' }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
                     <span style={{ fontSize: 12, fontFamily: 'JetBrains Mono, monospace', color: '#00a3ff', fontWeight: 500 }}>{entry.id}</span>
@@ -205,10 +235,10 @@ export default function LiveFeed() {
                   </div>
                   <div style={{ fontSize: 13, color: '#e2e8f0', fontWeight: 500, marginBottom: 4 }}>{t(entry.typeKey)}</div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontSize: 11, color: '#64748b' }}>{t(entry.locKey)}</span>
+                    <span style={{ fontSize: 11, color: '#64748b' }}>{t(entry.locationKey)}</span>
                     <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-                      <span style={{ fontSize: 10, color: '#64748b', fontFamily: 'JetBrains Mono, monospace' }}>{entry.conf}%</span>
-                      <span style={{ fontSize: 10, fontWeight: 700, fontFamily: 'JetBrains Mono, monospace', color: sev.color, background: sev.bg, borderRadius: 3, padding: '2px 6px' }}>{t(`severity.${entry.sev}`)}</span>
+                      <span style={{ fontSize: 10, color: '#64748b', fontFamily: 'JetBrains Mono, monospace' }}>{entry.confidence}%</span>
+                      <span style={{ fontSize: 10, fontWeight: 700, fontFamily: 'JetBrains Mono, monospace', color: sev.color, background: sev.bg, borderRadius: 3, padding: '2px 6px' }}>{t(`severity.${entry.severity}`)}</span>
                     </div>
                   </div>
                 </div>

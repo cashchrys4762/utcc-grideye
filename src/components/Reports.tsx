@@ -1,50 +1,12 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts'
 import PanelHeader from './PanelHeader'
 import ChartLegend from './ChartLegend'
-
-const causeKeys = [
-  { key: 'causes.speeding', value: 32, color: '#ef4444' },
-  { key: 'causes.redLightViolation', value: 24, color: '#f59e0b' },
-  { key: 'causes.distractedDriving', value: 18, color: '#00a3ff' },
-  { key: 'causes.laneChange', value: 14, color: '#a855f7' },
-  { key: 'causes.roadCondition', value: 8, color: '#22c55e' },
-  { key: 'causes.other', value: 4, color: '#475569' },
-]
-
-const tableData = [
-  { date: '2024-07-10', locationKey: 'locations.latPhraoKaset', typeKey: 'incidentTypes.multiVehicleCollision', risk: 9.2 },
-  { date: '2024-07-10', locationKey: 'locations.sukhumvitSoi71', typeKey: 'incidentTypes.pedestrianConflict', risk: 6.7 },
-  { date: '2024-07-10', locationKey: 'locations.ratchadaphisek', typeKey: 'incidentTypes.redLightViolation', risk: 4.1 },
-  { date: '2024-07-10', locationKey: 'locations.chatuchak', typeKey: 'incidentTypes.congestionAlert', risk: 5.8 },
-  { date: '2024-07-09', locationKey: 'locations.huaiKhwang', typeKey: 'incidentTypes.wrongWayDriver', risk: 9.7 },
-  { date: '2024-07-09', locationKey: 'locations.phetchaburi', typeKey: 'incidentTypes.laneObstruction', risk: 3.2 },
-  { date: '2024-07-09', locationKey: 'locations.vibhavadiRangsit', typeKey: 'incidentTypes.speedViolation', risk: 4.5 },
-  { date: '2024-07-09', locationKey: 'locations.dinDaeng', typeKey: 'incidentTypes.multiVehicleCollision', risk: 8.9 },
-  { date: '2024-07-08', locationKey: 'locations.ariBtsArea', typeKey: 'incidentTypes.pedestrianConflict', risk: 6.1 },
-  { date: '2024-07-08', locationKey: 'locations.phahonYothin', typeKey: 'incidentTypes.redLightViolation', risk: 3.8 },
-  { date: '2024-07-08', locationKey: 'locations.ngamwongwan', typeKey: 'incidentTypes.vehicleBreakdown', risk: 4.4 },
-  { date: '2024-07-07', locationKey: 'locations.outerRingEast', typeKey: 'incidentTypes.roadDebris', risk: 2.9 },
-]
-
-const locationFilters = [
-  { value: 'all', key: 'locations.allLocations' },
-  { value: 'huaiKhwang', key: 'locations.huaiKhwangFilter' },
-  { value: 'latPhrao', key: 'locations.latPhraoFilter' },
-  { value: 'sukhumvit', key: 'locations.sukhumvitFilter' },
-  { value: 'ratchadaphisek', key: 'locations.ratchadaphisekFilter' },
-  { value: 'chatuchak', key: 'locations.chatuchakFilter' },
-]
-
-const hotspots = [
-  { nameKey: 'locations.huaiKhwang', count: 47, x: 62, y: 38 },
-  { nameKey: 'locations.latPhraoJunction', count: 39, x: 44, y: 25 },
-  { nameKey: 'locations.chatuchakShort', count: 31, x: 30, y: 42 },
-  { nameKey: 'locations.dinDaengHotspot', count: 26, x: 50, y: 55 },
-  { nameKey: 'locations.sukhumvitSoi71', count: 22, x: 72, y: 65 },
-  { nameKey: 'locations.ratchadaphisekFilter', count: 18, x: 40, y: 62 },
-]
+import { useApp } from '../context/AppContext'
+import { generateReport, exportIncidentsCsv, sortIncidents } from '../api/mockApi'
+import { LOCATION_FILTERS } from '../data/incidents'
+import type { CauseStat, Hotspot, Incident, SortDirection } from '../data/types'
 
 function RiskBar({ score }: { score: number }) {
   const color = score >= 8 ? '#ef4444' : score >= 6 ? '#f59e0b' : score >= 4 ? '#00a3ff' : '#22c55e'
@@ -68,12 +30,18 @@ const inputStyle: React.CSSProperties = {
 
 export default function Reports() {
   const { t } = useTranslation()
+  const { showToast, openIncident } = useApp()
   const [dateFrom, setDateFrom] = useState('2024-07-07')
   const [dateTo, setDateTo] = useState('2024-07-10')
   const [location, setLocation] = useState('all')
   const [sortCol, setSortCol] = useState('date')
+  const [sortDir, setSortDir] = useState<SortDirection>('desc')
+  const [loading, setLoading] = useState(false)
+  const [generated, setGenerated] = useState(false)
+  const [tableData, setTableData] = useState<Incident[]>([])
+  const [causeData, setCauseData] = useState<CauseStat[]>([])
+  const [hotspots, setHotspots] = useState<Hotspot[]>([])
 
-  const causeData = causeKeys.map((c) => ({ name: t(c.key), value: c.value, color: c.color }))
   const sortLabels: Record<string, string> = {
     date: t('reports.headers.date'),
     location: t('reports.headers.location'),
@@ -88,6 +56,52 @@ export default function Reports() {
     { id: 'risk', key: 'reports.headers.risk' },
   ]
 
+  const handleSort = (col: string) => {
+    if (sortCol === col) {
+      setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'))
+    } else {
+      setSortCol(col)
+      setSortDir('desc')
+    }
+  }
+
+  const loadReport = async (showNotification = false) => {
+    setLoading(true)
+    try {
+      const result = await generateReport({ dateFrom, dateTo, location })
+      setTableData(result.incidents)
+      setCauseData(result.causes)
+      setHotspots(result.hotspots)
+      setGenerated(true)
+      if (showNotification) {
+        showToast(t('toast.reportGenerated', { count: result.incidents.length }), 'success')
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    loadReport()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const handleExport = () => {
+    if (!generated || tableData.length === 0) {
+      showToast(t('toast.generateFirst'), 'warning')
+      return
+    }
+    const sorted = sortIncidents(tableData, sortCol, sortDir)
+    exportIncidentsCsv(sorted, t)
+    showToast(t('toast.csvExported'), 'success')
+  }
+
+  const displayedData = generated
+    ? sortIncidents(tableData, sortCol, sortDir)
+    : []
+
+  const pieData = causeData.map((c) => ({ name: t(c.key), value: c.value, color: c.color }))
+
   const CustomPieTooltip = ({ active, payload }: { active?: boolean; payload?: { name?: string; value?: number; payload?: { color?: string } }[] }) => {
     if (active && payload && payload.length) {
       return (
@@ -99,6 +113,8 @@ export default function Reports() {
     }
     return null
   }
+
+  const maxHotspotCount = hotspots.length > 0 ? Math.max(...hotspots.map((h) => h.count)) : 47
 
   return (
     <div className="page-content">
@@ -119,15 +135,17 @@ export default function Reports() {
         <div className="filter-field">
           <span style={{ fontSize: 12, color: '#64748b', fontFamily: 'JetBrains Mono, monospace' }}>{t('reports.location')}</span>
           <select value={location} onChange={(e) => setLocation(e.target.value)} style={{ ...inputStyle, cursor: 'pointer', width: '100%' }}>
-            {locationFilters.map((l) => <option key={l.value} value={l.value} style={{ background: '#0f172a' }}>{t(l.key)}</option>)}
+            {LOCATION_FILTERS.map((l) => <option key={l.value} value={l.value} style={{ background: '#0f172a' }}>{t(l.key)}</option>)}
           </select>
         </div>
         <div className="filter-bar-actions">
-        <button style={{
-          padding: '8px 18px', background: 'linear-gradient(135deg, #00a3ff, #0066cc)',
-          borderWidth: 0, borderRadius: 8, color: 'white', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'JetBrains Mono, monospace', width: '100%',
-        }}>{t('reports.generateReport')}</button>
-        <button style={{
+        <button onClick={() => loadReport(true)} disabled={loading} style={{
+          padding: '8px 18px', background: loading ? '#1e293b' : 'linear-gradient(135deg, #00a3ff, #0066cc)',
+          borderWidth: 0, borderRadius: 8, color: 'white', fontSize: 13, fontWeight: 600,
+          cursor: loading ? 'wait' : 'pointer', fontFamily: 'JetBrains Mono, monospace', width: '100%',
+          opacity: loading ? 0.7 : 1,
+        }}>{loading ? t('reports.generating') : t('reports.generateReport')}</button>
+        <button onClick={handleExport} style={{
           padding: '8px 18px', background: 'rgba(0,163,255,0.08)',
           borderWidth: 1, borderStyle: 'solid', borderColor: 'rgba(0,163,255,0.25)',
           borderRadius: 8, color: '#00a3ff', fontSize: 13, cursor: 'pointer', fontFamily: 'JetBrains Mono, monospace', width: '100%',
@@ -137,18 +155,24 @@ export default function Reports() {
 
       <div className="charts-grid">
         <div style={{ ...card, padding: '22px 24px' }}>
-          <PanelHeader center title={t('reports.causesTitle')} subtitle={t('reports.causesSubtitle')} />
+          <PanelHeader center title={t('reports.causesTitle')} subtitle={generated ? t('reports.causesSubtitleFiltered', { count: tableData.length }) : t('reports.causesSubtitle')} />
           <div className="pie-chart-wrap">
-            <ResponsiveContainer width="100%" height={196}>
-              <PieChart margin={{ top: 4, right: 0, bottom: 12, left: 0 }}>
-                <Pie data={causeData} cx="50%" cy="46%" innerRadius={58} outerRadius={86} paddingAngle={3} dataKey="value">
-                  {causeData.map((entry, i) => <Cell key={i} fill={entry.color} stroke="transparent" />)}
-                </Pie>
-                <Tooltip content={<CustomPieTooltip />} />
-              </PieChart>
-            </ResponsiveContainer>
+            {generated && pieData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={196}>
+                <PieChart margin={{ top: 4, right: 0, bottom: 12, left: 0 }}>
+                  <Pie data={pieData} cx="50%" cy="46%" innerRadius={58} outerRadius={86} paddingAngle={3} dataKey="value">
+                    {pieData.map((entry, i) => <Cell key={i} fill={entry.color} stroke="transparent" />)}
+                  </Pie>
+                  <Tooltip content={<CustomPieTooltip />} />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : (
+              <div style={{ height: 196, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#475569', fontSize: 13, fontFamily: 'JetBrains Mono, monospace' }}>
+                {t('reports.noData')}
+              </div>
+            )}
           </div>
-          <ChartLegend items={causeData} />
+          {generated && pieData.length > 0 && <ChartLegend items={pieData} />}
         </div>
 
         <div style={{ ...card, overflow: 'hidden', position: 'relative' }}>
@@ -165,9 +189,9 @@ export default function Reports() {
               <line x1="0" y1="20" x2="45" y2="40" stroke="#1e3a5f" strokeWidth="0.5" />
               <line x1="55" y1="42" x2="100" y2="25" stroke="#1e3a5f" strokeWidth="0.5" />
             </svg>
-            {hotspots.map((h) => {
-              const radius = 6 + (h.count / 47) * 20
-              const alpha = 0.2 + (h.count / 47) * 0.35
+            {(generated ? hotspots : []).map((h) => {
+              const radius = 6 + (h.count / maxHotspotCount) * 20
+              const alpha = 0.2 + (h.count / maxHotspotCount) * 0.35
               return (
                 <div key={h.nameKey} style={{ position: 'absolute', left: `${h.x}%`, top: `${h.y}%`, transform: 'translate(-50%,-50%)' }}>
                   <div style={{
@@ -202,7 +226,9 @@ export default function Reports() {
           <PanelHeader
             center
             title={t('reports.tableTitle')}
-            subtitle={t('reports.recordsSorted', { count: tableData.length, sort: sortLabels[sortCol] ?? sortCol })}
+            subtitle={generated
+              ? t('reports.recordsSorted', { count: displayedData.length, sort: sortLabels[sortCol] ?? sortCol })
+              : t('reports.tableEmpty')}
           />
         </div>
         <div className="table-scroll">
@@ -210,20 +236,27 @@ export default function Reports() {
             <thead>
               <tr style={{ borderBottomWidth: 1, borderBottomStyle: 'solid', borderBottomColor: '#1e293b' }}>
                 {tableHeaders.map((h) => (
-                  <th key={h.id} onClick={() => setSortCol(h.id)} style={{
+                  <th key={h.id} onClick={() => handleSort(h.id)} style={{
                     padding: '10px 22px', textAlign: 'left', fontSize: 11, fontWeight: 600,
                     color: sortCol === h.id ? '#00a3ff' : '#475569',
                     fontFamily: 'JetBrains Mono, monospace', letterSpacing: '0.06em', cursor: 'pointer', userSelect: 'none', whiteSpace: 'nowrap',
                   }}>
-                    {t(h.key).toUpperCase()} {sortCol === h.id ? '↑' : ''}
+                    {t(h.key).toUpperCase()} {sortCol === h.id ? (sortDir === 'asc' ? '↑' : '↓') : ''}
                   </th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {tableData.map((row, i) => (
-                <tr key={i}
-                  style={{ borderBottomWidth: i < tableData.length - 1 ? 1 : 0, borderBottomStyle: 'solid', borderBottomColor: '#0f172a' }}
+              {displayedData.length === 0 ? (
+                <tr>
+                  <td colSpan={4} style={{ padding: '32px 22px', textAlign: 'center', color: '#475569', fontSize: 13, fontFamily: 'JetBrains Mono, monospace' }}>
+                    {t('reports.noData')}
+                  </td>
+                </tr>
+              ) : displayedData.map((row, i) => (
+                <tr key={row.id}
+                  onClick={() => openIncident(row)}
+                  style={{ borderBottomWidth: i < displayedData.length - 1 ? 1 : 0, borderBottomStyle: 'solid', borderBottomColor: '#0f172a', cursor: 'pointer' }}
                   onMouseEnter={(e) => { (e.currentTarget as HTMLTableRowElement).style.background = '#0f172a' }}
                   onMouseLeave={(e) => { (e.currentTarget as HTMLTableRowElement).style.background = 'transparent' }}
                 >

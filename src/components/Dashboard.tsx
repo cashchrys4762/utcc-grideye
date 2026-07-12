@@ -1,26 +1,11 @@
+import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import PanelHeader from './PanelHeader'
-
-const trafficData = [
-  { time: '00:00', volume: 1240 }, { time: '01:00', volume: 890 }, { time: '02:00', volume: 620 },
-  { time: '03:00', volume: 480 }, { time: '04:00', volume: 710 }, { time: '05:00', volume: 1380 },
-  { time: '06:00', volume: 2940 }, { time: '07:00', volume: 4820 }, { time: '08:00', volume: 5610 },
-  { time: '09:00', volume: 4930 }, { time: '10:00', volume: 4210 }, { time: '11:00', volume: 3980 },
-  { time: '12:00', volume: 4450 }, { time: '13:00', volume: 4180 }, { time: '14:00', volume: 3760 },
-  { time: '15:00', volume: 4290 }, { time: '16:00', volume: 5120 }, { time: '17:00', volume: 6340 },
-  { time: '18:00', volume: 5890 }, { time: '19:00', volume: 4620 }, { time: '20:00', volume: 3840 },
-  { time: '21:00', volume: 3120 }, { time: '22:00', volume: 2340 }, { time: '23:00', volume: 1680 },
-]
-
-const incidents = [
-  { id: 'INC-0847', time: '18:42', locationKey: 'locations.latPhraoKaset', typeKey: 'incidentTypes.multiVehicleCollision', severity: 'high', cam: 'CAM-LP-03' },
-  { id: 'INC-0846', time: '18:21', locationKey: 'locations.sukhumvitSoi71', typeKey: 'incidentTypes.pedestrianConflict', severity: 'medium', cam: 'CAM-SK-12' },
-  { id: 'INC-0845', time: '17:58', locationKey: 'locations.ratchadaphisek', typeKey: 'incidentTypes.redLightViolation', severity: 'low', cam: 'CAM-RD-07' },
-  { id: 'INC-0844', time: '17:39', locationKey: 'locations.chatuchak', typeKey: 'incidentTypes.congestionAlert', severity: 'medium', cam: 'CAM-CK-01' },
-  { id: 'INC-0843', time: '17:12', locationKey: 'locations.huaiKhwang', typeKey: 'incidentTypes.wrongWayDriver', severity: 'high', cam: 'CAM-HK-04' },
-  { id: 'INC-0842', time: '16:55', locationKey: 'locations.phetchaburi', typeKey: 'incidentTypes.laneObstruction', severity: 'low', cam: 'CAM-PB-09' },
-]
+import { useApp } from '../context/AppContext'
+import { fetchTraffic, getActiveIncidentCount, getRecentIncidents } from '../api/mockApi'
+import { getTotalVolume } from '../data/traffic'
+import type { TrafficPeriod } from '../data/types'
 
 const card = {
   background: '#0a1628',
@@ -30,14 +15,35 @@ const card = {
 
 export default function Dashboard() {
   const { t } = useTranslation()
+  const { navigate, openIncident } = useApp()
+  const [period, setPeriod] = useState<TrafficPeriod>('24h')
+  const [trafficData, setTrafficData] = useState<{ time: string; volume: number }[]>([])
+  const [lastUpdated, setLastUpdated] = useState('')
+
+  const incidents = getRecentIncidents(6)
+  const activeCount = getActiveIncidentCount()
+
+  useEffect(() => {
+    fetchTraffic(period).then(setTrafficData)
+  }, [period])
+
+  useEffect(() => {
+    const update = () => setLastUpdated(new Date().toTimeString().slice(0, 8))
+    update()
+    const id = setInterval(update, 1000)
+    return () => clearInterval(id)
+  }, [])
+
+  const totalVolume = getTotalVolume(period)
+  const volumeLabel = period === '24h' ? totalVolume.toLocaleString() : totalVolume.toLocaleString()
 
   const kpis = [
     {
-      label: t('dashboard.kpi.trafficVolume'), value: '84,293', unit: t('dashboard.kpi.trafficVolumeUnit'), delta: t('dashboard.kpi.trafficVolumeDelta'), up: true, color: '#00a3ff',
+      label: t('dashboard.kpi.trafficVolume'), value: volumeLabel, unit: t('dashboard.kpi.trafficVolumeUnit'), delta: t('dashboard.kpi.trafficVolumeDelta'), up: true, color: '#00a3ff',
       icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00a3ff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="3" width="15" height="13" rx="2" /><path d="M16 8h4l3 5v3h-7V8z" /><circle cx="5.5" cy="18.5" r="2.5" /><circle cx="18.5" cy="18.5" r="2.5" /></svg>,
     },
     {
-      label: t('dashboard.kpi.activeIncidents'), value: '14', unit: t('dashboard.kpi.activeIncidentsUnit'), delta: t('dashboard.kpi.activeIncidentsDelta'), up: false, color: '#ef4444',
+      label: t('dashboard.kpi.activeIncidents'), value: String(activeCount), unit: t('dashboard.kpi.activeIncidentsUnit'), delta: t('dashboard.kpi.activeIncidentsDelta'), up: false, color: '#ef4444',
       icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>,
     },
     {
@@ -71,6 +77,8 @@ export default function Dashboard() {
     return null
   }
 
+  const periods: TrafficPeriod[] = ['24h', '7d', '30d']
+
   return (
     <div className="page-content">
       <div className="page-header">
@@ -81,7 +89,7 @@ export default function Dashboard() {
         </div>
         <div className="status-pill" style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#0f172a', borderWidth: 1, borderStyle: 'solid', borderColor: '#1e293b', borderRadius: 8, padding: '8px 14px' }}>
           <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#22c55e', boxShadow: '0 0 6px #22c55e' }} />
-          <span style={{ fontSize: 12, color: '#94a3b8', fontFamily: 'JetBrains Mono, monospace' }}>{t('dashboard.lastUpdated')}</span>
+          <span style={{ fontSize: 12, color: '#94a3b8', fontFamily: 'JetBrains Mono, monospace' }}>{t('dashboard.lastUpdatedAt', { time: lastUpdated })}</span>
         </div>
       </div>
 
@@ -113,14 +121,14 @@ export default function Dashboard() {
           subtitle={t('dashboard.chart.subtitle')}
           actions={(
             <div className="chart-period-tabs">
-              {['24h', '7d', '30d'].map((period, i) => (
-                <button key={period} style={{
+              {periods.map((p) => (
+                <button key={p} onClick={() => setPeriod(p)} style={{
                   padding: '5px 12px', borderRadius: 6,
-                  borderWidth: 1, borderStyle: 'solid', borderColor: i === 0 ? '#00a3ff' : '#1e293b',
-                  background: i === 0 ? 'rgba(0,163,255,0.1)' : 'transparent',
-                  color: i === 0 ? '#00a3ff' : '#64748b',
+                  borderWidth: 1, borderStyle: 'solid', borderColor: period === p ? '#00a3ff' : '#1e293b',
+                  background: period === p ? 'rgba(0,163,255,0.1)' : 'transparent',
+                  color: period === p ? '#00a3ff' : '#64748b',
                   fontSize: 12, cursor: 'pointer', fontFamily: 'JetBrains Mono, monospace',
-                }}>{period}</button>
+                }}>{p}</button>
               ))}
             </div>
           )}
@@ -135,7 +143,7 @@ export default function Dashboard() {
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
-            <XAxis dataKey="time" tick={{ fill: '#475569', fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }} axisLine={false} tickLine={false} interval={3} />
+            <XAxis dataKey="time" tick={{ fill: '#475569', fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }} axisLine={false} tickLine={false} interval={period === '24h' ? 3 : 0} />
             <YAxis tick={{ fill: '#475569', fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }} axisLine={false} tickLine={false} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
             <Tooltip content={<CustomTooltip />} />
             <Area type="monotone" dataKey="volume" stroke="#00a3ff" strokeWidth={2} fill="url(#blueGrad)" dot={false} activeDot={{ r: 5, fill: '#00a3ff', stroke: '#0a1628', strokeWidth: 2 }} />
@@ -151,7 +159,7 @@ export default function Dashboard() {
             title={t('dashboard.incidents.title')}
             subtitle={t('dashboard.incidents.subtitle')}
           />
-          <button style={{
+          <button onClick={() => navigate('reports')} style={{
             marginTop: 12, padding: '6px 14px', background: 'rgba(0,163,255,0.1)',
             borderWidth: 1, borderStyle: 'solid', borderColor: 'rgba(0,163,255,0.3)',
             borderRadius: 6, color: '#00a3ff', fontSize: 12, cursor: 'pointer', fontFamily: 'JetBrains Mono, monospace',
@@ -171,7 +179,8 @@ export default function Dashboard() {
           <tbody>
             {incidents.map((inc, i) => (
               <tr key={inc.id}
-                style={{ borderBottomWidth: i < incidents.length - 1 ? 1 : 0, borderBottomStyle: 'solid', borderBottomColor: '#0f172a' }}
+                onClick={() => openIncident(inc)}
+                style={{ borderBottomWidth: i < incidents.length - 1 ? 1 : 0, borderBottomStyle: 'solid', borderBottomColor: '#0f172a', cursor: 'pointer' }}
                 onMouseEnter={(e) => { (e.currentTarget as HTMLTableRowElement).style.background = '#0f172a' }}
                 onMouseLeave={(e) => { (e.currentTarget as HTMLTableRowElement).style.background = 'transparent' }}
               >

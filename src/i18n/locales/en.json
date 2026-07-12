@@ -15,6 +15,7 @@
     "title": "Traffic Intelligence Center",
     "subtitle": "Bangkok Metropolitan Region — Real-time monitoring",
     "lastUpdated": "Last updated: 18:47:03",
+    "lastUpdatedAt": "Last updated: {{time}}",
     "vehicles": "vehicles",
     "kpi": {
       "trafficVolume": "Traffic Volume",
@@ -122,7 +123,11 @@
     "to": "TO",
     "location": "LOCATION",
     "generateReport": "GENERATE REPORT",
+    "generating": "GENERATING...",
     "exportCsv": "EXPORT CSV",
+    "noData": "Click GENERATE REPORT to load data",
+    "tableEmpty": "Generate a report to view incident records",
+    "causesSubtitleFiltered": "Distribution by primary cause — {{count}} events",
     "causesTitle": "Accident Causes",
     "causesSubtitle": "Distribution by primary cause — 847 events",
     "percentOfIncidents": "% of incidents",
@@ -199,7 +204,9 @@
       "dataRegion": "Data Region",
       "dataRegionValue": "Bangkok — ap-southeast-1",
       "checkUpdates": "CHECK UPDATES",
-      "restartNode": "RESTART NODE"
+      "checking": "CHECKING...",
+      "restartNode": "RESTART NODE",
+      "restarting": "RESTARTING..."
     },
     "security": {
       "title": "Security & Privacy",
@@ -227,5 +234,51 @@
         "daysAgo": "3 days ago"
       }
     }
+  },
+  "cameras": {
+    "huaiKhwang01": "HuaiKhwang Camera 01",
+    "latPhrao03": "Lat Phrao Camera 03",
+    "sukhumvit12": "Sukhumvit Camera 12",
+    "chatuchak01": "Chatuchak Camera 01"
+  },
+  "incidentDetail": {
+    "badge": "INCIDENT DETAIL",
+    "type": "Type",
+    "location": "Location",
+    "dateTime": "Date & Time",
+    "camera": "Camera",
+    "severity": "Severity",
+    "riskScore": "Risk Score",
+    "confidence": "AI Confidence",
+    "cause": "Primary Cause",
+    "statusLabel": "Status",
+    "vehicles": "Vehicles Involved",
+    "responseTime": "Response Time",
+    "responseTimeValue": "{{min}} min",
+    "close": "CLOSE",
+    "statuses": {
+      "active": "Active — Responding",
+      "resolved": "Resolved",
+      "monitoring": "Monitoring"
+    },
+    "desc": {
+      "multiVehicle": "AI detected a multi-vehicle collision with significant traffic disruption. Emergency services have been notified.",
+      "pedestrian": "Pedestrian conflict detected near crosswalk. Vehicle slowed but proximity threshold exceeded.",
+      "redLight": "Vehicle crossed intersection during red signal phase. License plate captured and anonymized.",
+      "congestion": "Traffic density exceeded threshold for 15+ minutes. Congestion alert issued to traffic management.",
+      "wrongWay": "Vehicle detected traveling against traffic flow. High-priority alert dispatched to patrol units.",
+      "obstruction": "Lane obstruction detected — possible stalled vehicle or debris. Lane monitoring active.",
+      "speed": "Vehicle exceeded speed limit by 40+ km/h. Speed violation logged for review.",
+      "breakdown": "Stationary vehicle detected in active lane for extended period. Breakdown response initiated.",
+      "debris": "Road debris identified on highway segment. Maintenance crew dispatch recommended."
+    }
+  },
+  "toast": {
+    "reportGenerated": "Report generated — {{count}} records found",
+    "csvExported": "CSV file downloaded successfully",
+    "generateFirst": "Please generate a report first",
+    "presetApplied": "Preset applied: {{preset}}",
+    "updateAvailable": "GridEye v2.4.2 is available — you are on v2.4.1",
+    "nodeRestarted": "Node cluster restarted successfully"
   }
 }

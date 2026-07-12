@@ -1,15 +1,11 @@
 import { useTranslation } from 'react-i18next'
-import type { Screen } from '../App'
+import { useApp } from '../context/AppContext'
 import LanguageSwitcher from './LanguageSwitcher'
 import { navItems } from '../navigation'
 
-interface Props {
-  active: Screen
-  onNavigate: (s: Screen) => void
-}
-
-export default function Sidebar({ active, onNavigate }: Props) {
+export default function Sidebar() {
   const { t } = useTranslation()
+  const { activeScreen: active, navigate } = useApp()
 
   return (
     <aside className="sidebar-desktop">
@@ -51,7 +47,7 @@ export default function Sidebar({ active, onNavigate }: Props) {
           return (
             <button
               key={item.id}
-              onClick={() => onNavigate(item.id)}
+              onClick={() => navigate(item.id)}
               style={{
                 width: '100%',
                 display: 'flex',
